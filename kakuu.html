@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>架空料金詐欺 - 詐欺対策ガイド</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1>架空料金詐欺</h1>
+            <a href="sagitaisaku.html" class="btn-home">トップページへ戻る</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Introduction Section -->
+        <section class="content-section" id="intro">
+            <h2 class="section-title">架空料金詐欺とは？</h2>
+            <div class="card">
+                <p class="large-text">
+                    「未払いの料金がある」「宝くじに当選した」などの嘘のメールやSMSを送りつけ、お金や個人情報をだまし取る詐欺です。<br>
+                    身に覚えのない請求や、うまい話には絶対にのらないようにしましょう。<br>
+                    <br>
+                    <strong>「確認してください」などのURLは絶対にクリックせず、無視してください。</strong>
+                </p>
+            </div>
+        </section>
+
+        <!-- Checklist Section -->
+        <section class="content-section" id="checklist">
+            <h2 class="section-title icon-check">被害防止チェックリスト</h2>
+            <p class="instruction-text">以下の項目を確認して、当てはまるものがないかチェックしてみましょう。</p>
+            <div class="card checklist-card">
+                <!-- Checklist Item 1 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">メールやSMSで「未払い料金があります」などと連絡が来た</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> コンビニ払い・電子マネーを要求</p>
+                                <p><span class="label-badge measure">対策</span> 公式サイトや番号で自分から確認する</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checklist Item 2 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">SNSで「当選しました」と連絡が来た</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> URLのクリックを促す</p>
+                                <p><span class="label-badge measure">対策</span> 住所・カード情報を入力しない</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checklist Item 3 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">「アンケートに答えるだけ」と言われた</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> 個人情報を細かく聞かれる</p>
+                                <p><span class="label-badge measure">対策</span> 必要以上の情報は入力しない</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checklist Item 4 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">「荷物が届きませんでした」メールが来た</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> 宅配業者を装う</p>
+                                <p><span class="label-badge measure">対策</span> 追跡番号は公式サイトで確認</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="content-section" id="quiz">
+            <h2 class="section-title icon-quiz">詐欺対策クイズ</h2>
+            <p class="instruction-text">クイズに答えて、詐欺への理解度を確認しましょう。</p>
+
+            <!-- Quiz Q1 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q1. 注文した覚えがないのに「お荷物の配達に来ましたが、不在のため持ち帰りました。ご確認ください。」とメールが来ました。どのように対応すればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">メールに返信する。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">添付されているURLに飛ぶ。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">無視する。</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「無視する」です。<br>
+                        URLをクリックさせ、個人情報を盗む典型的な手口です。本当に荷物が来る心当たりがある場合は、メールのリンクではなく、宅配便の公式サイトから確認しましょう。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q2. 注文した覚えのない商品が家に届きました。どうしますか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">荷物を開けてみて確かめる</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">受け取りを拒否する</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">家族が注文したかもしれないと思ってお金を払う</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「受け取りを拒否する」です。<br>
+                        身に覚えのない代引き荷物は、受け取りを拒否できます。一度払ってしまうと、返金してもらうのは非常に困難です。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q3 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q3. 「有料動画の料金が未納です」と電話がきました。どうすればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, true)">実際に利用している会社へ自分で確認</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">指示通り支払う</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">詳しく聞いてみる</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「実際に利用している会社へ自分で確認」です。<br>
+                        かかってきた電話番号や、言われた連絡先にはかけず、公式サイトなどに載っている正規の窓口に自分で問い合わせてください。
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>困ったときは、一人で悩まず相談しましょう。</p>
+            <div class="emergency-contact">
+                <p>警察相談専用電話 <span class="phone-number">#9110</span></p>
+                <p>消費者ホットライン <span class="phone-number">188</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * クイズの回答を判定する関数
+         * @param {HTMLElement} buttonElement クリックされたボタン要素 (this)
+         * @param {boolean} isCorrect 正解かどうか
+         */
+        function checkAnswer(buttonElement, isCorrect) {
+            // クリックされたボタンが含まれるカード要素を取得
+            const card = buttonElement.closest('.quiz-card');
+
+            // そのカード内のフィードバック要素を取得（IDではなくクラスで検索）
+            const feedbackSection = card.querySelector('.quiz-feedback');
+            const resultText = card.querySelector('.feedback-result');
+
+            // 表示をオンにする
+            feedbackSection.style.display = 'block';
+
+            // 判定結果を表示
+            if (isCorrect) {
+                resultText.textContent = "◎ 正解です！";
+                resultText.className = "feedback-result correct";
+            } else {
+                resultText.textContent = "× 不正解です...";
+                resultText.className = "feedback-result incorrect";
+            }
+        }
+    </script>
+</body>
+
+</html>

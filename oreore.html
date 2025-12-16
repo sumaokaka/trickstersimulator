@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>詐欺対策ガイド - 詳細ページ</title>
+    <title>オレオレ詐欺 - 詐欺対策ガイド</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <header class="site-header">
         <div class="container">
-            <h1>詐欺対策ガイド</h1>
+            <h1>オレオレ詐欺</h1>
             <a href="sagitaisaku.html" class="btn-home">トップページへ戻る</a>
         </div>
     </header>
@@ -19,13 +19,13 @@
     <main class="container">
         <!-- Introduction Section -->
         <section class="content-section" id="intro">
-            <h2 class="section-title">【詐欺の種類】について</h2>
+            <h2 class="section-title">オレオレ詐欺とは？</h2>
             <div class="card">
                 <p class="large-text">
-                    ここに詐欺の手口や特徴についての説明文が入ります。<br>
-                    高齢者の方にも読みやすいように、専門用語を避け、分かりやすい言葉で記述します。
-                    <br><br>
-                    例：「電話でお金のことを言われたら、まずは疑ってください。」
+                    息子や孫、またはその関係者を装って電話をかけ、会社でのトラブルや交通事故などを名目にお金を要求する詐欺です。<br>
+                    「携帯電話の番号が変わった」「風邪をひいて声が変わった」などと言い、本人だと思い込ませようとします。<br>
+                    <br>
+                    <strong>「すぐにお金が必要だ」と急かされても、一度電話を切って、必ず元々の電話番号にかけて確認しましょう。</strong>
                 </p>
             </div>
         </section>
@@ -35,31 +35,16 @@
             <h2 class="section-title icon-check">被害防止チェックリスト</h2>
             <p class="instruction-text">以下の項目を確認して、当てはまるものがないかチェックしてみましょう。</p>
             <div class="card checklist-card">
-                <!-- Checklist Item Template -->
+                <!-- Checklist Item 1 -->
                 <div class="checklist-item">
                     <label class="custom-checkbox">
                         <input type="checkbox">
                         <span class="checkmark"></span>
                         <div class="checklist-content">
-                            <h3 class="checklist-title">【詐欺の例】例を記入してください（例：市役所職員を名乗る電話）</h3>
+                            <h3 class="checklist-title">「俺だけど…」など息子(孫)を名乗る電話がきた</h3>
                             <div class="checklist-body">
-                                <p><span class="label-badge feature">特徴</span> ここに特徴を記入します。（例：「還付金がある」と言い、ATMへ誘導する）</p>
-                                <p><span class="label-badge measure">対策</span> ここに対策を記入します。（例：電話を切って、市役所に確認する）</p>
-                            </div>
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Example Item 2 (Copy for more items) -->
-                <div class="checklist-item">
-                    <label class="custom-checkbox">
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                        <div class="checklist-content">
-                            <h3 class="checklist-title">【詐欺の例】...</h3>
-                            <div class="checklist-body">
-                                <p><span class="label-badge feature">特徴</span> ...</p>
-                                <p><span class="label-badge measure">対策</span> ...</p>
+                                <p><span class="label-badge feature">特徴</span> 泣き声などで同情を誘う、携帯番号が変わったなど</p>
+                                <p><span class="label-badge measure">対策</span> 一度電話を切って、本人の電話にかけなおす</p>
                             </div>
                         </div>
                     </label>
@@ -72,20 +57,41 @@
             <h2 class="section-title icon-quiz">詐欺対策クイズ</h2>
             <p class="instruction-text">クイズに答えて、詐欺への理解度を確認しましょう。</p>
 
-            <!-- Quiz Item Template -->
-            <div class="card quiz-card">       
+            <!-- Quiz Q1 -->
+            <div class="card quiz-card">
                 <div class="quiz-question">
-                    <h3>Q1. クイズの質問文がここに入ります</h3>
+                    <h3>Q1. 息子や孫を名乗り，「事故を起こした」とお金を振り込むように要求されました．どうすればいいですか？</h3>
                 </div>
                 <div class="quiz-options">
-                    <!-- checkAnswer(this, true/false) で正誤を指定します -->
-                    <button class="btn-option" onclick="checkAnswer(this, true)">選択肢 A（正解の場合）</button>
-                    <button class="btn-option" onclick="checkAnswer(this, false)">選択肢 B（不正解の場合）</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">すぐにお金を振り込む</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">誰にも相談せずにお金を用意する</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">自分の息子や孫の連絡先にか<br>けなおし確かめる</button>
                 </div>
-                <!-- IDを削除しクラスのみにしました -->
                 <div class="quiz-feedback" style="display:none;">
                     <p class="feedback-result"></p>
-                    <p class="feedback-text">解説文がここに表示されます。</p>
+                    <p class="feedback-text">
+                        正解は「自分の息子や孫の連絡先にか けなおし確かめる」です。<br>
+                        事故やトラブルの連絡があっても鵜呑みにせず、必ず一度電話を切って、あなたが知っている連絡先にかけて確認しましょう。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q2. 「携帯の番号が変わったから、この番号に連絡して」と息子や孫を名乗る電話がありました．どうすればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">信じて話を聞き続ける</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">新しい番号をすぐ登録する</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">家族に自分から確認の電話をする</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「家族に自分から確認の電話をする」です。<br>
+                        「番号が変わった」は典型的な手口です。元の電話番号にかけるか、他の家族に相談して確認を取りましょう。
+                    </p>
                 </div>
             </div>
         </section>

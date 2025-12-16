@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>還付金詐欺 - 詐欺対策ガイド</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1>還付金詐欺</h1>
+            <a href="sagitaisaku.html" class="btn-home">トップページへ戻る</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Introduction Section -->
+        <section class="content-section" id="intro">
+            <h2 class="section-title">還付金詐欺とは？</h2>
+            <div class="card">
+                <p class="large-text">
+                    市役所や年金事務所などの職員を装い、「医療費や保険料の還付金がある」と嘘の電話をかけてくる詐欺です。<br>
+                    「今日中なら間に合う」などと急かしてATMへ誘導し、言葉巧みにお金を振り込ませようとします。<br>
+                    <br>
+                    <strong>「ATMで還付金が戻ってくる」ことは絶対にありません。</strong>
+                </p>
+            </div>
+        </section>
+
+        <!-- Checklist Section -->
+        <section class="content-section" id="checklist">
+            <h2 class="section-title icon-check">被害防止チェックリスト</h2>
+            <p class="instruction-text">以下の項目を確認して、当てはまるものがないかチェックしてみましょう。</p>
+            <div class="card checklist-card">
+                <!-- Checklist Item 1 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">公的機関を名乗り「還付金があります」と連絡があった</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> ATMで操作を指示</p>
+                                <p><span class="label-badge measure">対策</span> ATMで還付手続きは不可能</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checklist Item 2 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">「医療費の返金」「保険料の返金」があると言われた</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> 電話で急がせる</p>
+                                <p><span class="label-badge measure">対策</span> 市役所・保険窓口に確認</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="content-section" id="quiz">
+            <h2 class="section-title icon-quiz">詐欺対策クイズ</h2>
+            <p class="instruction-text">クイズに答えて、詐欺への理解度を確認しましょう。</p>
+
+            <!-- Quiz Q1 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q1. 自治体や税務署の職員を名乗る人物から「払いすぎている保険料を返金します」と電話が掛かってきました。どのように対応すればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">指示通りに動く。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">警察に相談する。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">そのまま話を聞き続ける。</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「警察に相談する」です。<br>
+                        公的機関が電話だけでお金に関する手続きをすることはまずありません。一旦電話を切り、警察や家族に相談してください。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q2. 「手続きを急がないと返金できません」と急かされた。どうすればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">急いで手続きする</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">ATMへ行く</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">警察か自治体に相談する</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「警察か自治体に相談する」です。<br>
+                        「今すぐ」「今日中」と急かして、冷静な判断をさせないのが詐欺の手口です。焦らず誰かに相談しましょう。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q3 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q3. ATMで還付金がもどることはありますか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">ある</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">ない</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「ない」です。<br>
+                        ATMを操作してお金が戻ってくる（振り込まれる）ことは絶対にありません。ATMへ行けと言われたら詐欺です。
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>困ったときは、一人で悩まず相談しましょう。</p>
+            <div class="emergency-contact">
+                <p>警察相談専用電話 <span class="phone-number">#9110</span></p>
+                <p>消費者ホットライン <span class="phone-number">188</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * クイズの回答を判定する関数
+         * @param {HTMLElement} buttonElement クリックされたボタン要素 (this)
+         * @param {boolean} isCorrect 正解かどうか
+         */
+        function checkAnswer(buttonElement, isCorrect) {
+            // クリックされたボタンが含まれるカード要素を取得
+            const card = buttonElement.closest('.quiz-card');
+
+            // そのカード内のフィードバック要素を取得（IDではなくクラスで検索）
+            const feedbackSection = card.querySelector('.quiz-feedback');
+            const resultText = card.querySelector('.feedback-result');
+
+            // 表示をオンにする
+            feedbackSection.style.display = 'block';
+
+            // 判定結果を表示
+            if (isCorrect) {
+                resultText.textContent = "◎ 正解です！";
+                resultText.className = "feedback-result correct";
+            } else {
+                resultText.textContent = "× 不正解です...";
+                resultText.className = "feedback-result incorrect";
+            }
+        }
+    </script>
+</body>
+
+</html>

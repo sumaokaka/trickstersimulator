@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>預貯金詐欺 - 詐欺対策ガイド</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1>預貯金詐欺</h1>
+            <a href="sagitaisaku.html" class="btn-home">トップページへ戻る</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Introduction Section -->
+        <section class="content-section" id="intro">
+            <h2 class="section-title">預貯金詐欺とは？</h2>
+            <div class="card">
+                <p class="large-text">
+                    警察官や銀行員、百貨店の店員などを装い、「キャッシュカードが不正利用されています」「新しいカードに交換が必要です」などと偽って、キャッシュカードをだまし取る詐欺です。<br>
+                    <br>
+                    <strong>警察や銀行が、電話で暗証番号を聞いたり、自宅にキャッシュカードを受け取りに行くことは絶対にありません。</strong>
+                </p>
+            </div>
+        </section>
+
+        <!-- Checklist Section -->
+        <section class="content-section" id="checklist">
+            <h2 class="section-title icon-check">被害防止チェックリスト</h2>
+            <p class="instruction-text">以下の項目を確認して、当てはまるものがないかチェックしてみましょう。</p>
+            <div class="card checklist-card">
+                <!-- Checklist Item 1 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">警察、銀行職員を名乗る電話・訪問が来た</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> カードや暗証番号などの個人情報を求める</p>
+                                <p><span class="label-badge measure">対策</span> 警察・銀行が個人情報を聞くことは絶対にない</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checklist Item 2 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">「新しいカードに交換」と言われた</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> 古いカードを回収しようとする</p>
+                                <p><span class="label-badge measure">対策</span> カードの交換は銀行窓口でのみ交換可能、訪問は偽物</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="content-section" id="quiz">
+            <h2 class="section-title icon-quiz">詐欺対策クイズ</h2>
+            <p class="instruction-text">クイズに答えて、詐欺への理解度を確認しましょう。</p>
+
+            <!-- Quiz Q1 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q1. 身に覚えがないのに警察官が突然自宅に来ました。どの用に対応すればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, true)">最寄りの警察署に電話する。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">自宅に上がってもらう。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">玄関で話を聞く。</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「最寄りの警察署に電話する」です。<br>
+                        本物の警察官か確認するため、ドアを開けずに警察署へ連絡してください。偽警察官による被害が増えています。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q2. 銀行や警察が暗証番号を電話で聞くことはある？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, true)">ない</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">ある</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「ない」です。<br>
+                        銀行員や警察官が暗証番号（パスワード）を聞くことは絶対にありません。聞かれた時点で詐欺です。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q3 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q3. 銀行を名乗る人物から「口座が不正利用されています。お金を移してください」と電話がありました。どうすればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">口座を守るために指示通り振込</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">とりあえず口座番号だけ教える</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">電話を切り、自分で銀行の公式窓口に確認する</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「電話を切り、自分で銀行の公式窓口に確認する」です。<br>
+                        相手から教えられた番号ではなく、通帳や公式サイトに載っている正しい電話番号にかけて確認してください。
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>困ったときは、一人で悩まず相談しましょう。</p>
+            <div class="emergency-contact">
+                <p>警察相談専用電話 <span class="phone-number">#9110</span></p>
+                <p>消費者ホットライン <span class="phone-number">188</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * クイズの回答を判定する関数
+         * @param {HTMLElement} buttonElement クリックされたボタン要素 (this)
+         * @param {boolean} isCorrect 正解かどうか
+         */
+        function checkAnswer(buttonElement, isCorrect) {
+            // クリックされたボタンが含まれるカード要素を取得
+            const card = buttonElement.closest('.quiz-card');
+
+            // そのカード内のフィードバック要素を取得（IDではなくクラスで検索）
+            const feedbackSection = card.querySelector('.quiz-feedback');
+            const resultText = card.querySelector('.feedback-result');
+
+            // 表示をオンにする
+            feedbackSection.style.display = 'block';
+
+            // 判定結果を表示
+            if (isCorrect) {
+                resultText.textContent = "◎ 正解です！";
+                resultText.className = "feedback-result correct";
+            } else {
+                resultText.textContent = "× 不正解です...";
+                resultText.className = "feedback-result incorrect";
+            }
+        }
+    </script>
+</body>
+
+</html>

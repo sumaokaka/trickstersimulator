@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>その他の詐欺 - 詐欺対策ガイド</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1>その他の詐欺</h1>
+            <a href="sagitaisaku.html" class="btn-home">トップページへ戻る</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Introduction Section -->
+        <section class="content-section" id="intro">
+            <h2 class="section-title">その他の詐欺とは？</h2>
+            <div class="card">
+                <p class="large-text">
+                    悪質商法（訪問販売）、当選商法、パソコンやスマホのサポート詐欺など、手口は多様化しています。<br>
+                    <br>
+                    <strong>「無料点検」「ウイルス感染」「当選しました」といった言葉には特に注意が必要です。</strong>
+                </p>
+            </div>
+        </section>
+
+        <!-- Checklist Section -->
+        <section class="content-section" id="checklist">
+            <h2 class="section-title icon-check">被害防止チェックリスト</h2>
+            <p class="instruction-text">以下の項目を確認して、当てはまるものがないかチェックしてみましょう。</p>
+            <div class="card checklist-card">
+                <!-- Checklist Item 1 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">健康食品、布団、浄水器などを勧められた</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> 「今だけ安い」「限定キャンペーン」など</p>
+                                <p><span class="label-badge measure">対策</span> すぐに契約しない、名刺と会社名を控える</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checklist Item 2 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">「名義を貸してほしい」「保証人になってほしい」と言われた</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> 曖昧な契約書を出してくる</p>
+                                <p><span class="label-badge measure">対策</span> 署名・押印する前に必ず専門家に相談</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checklist Item 3 -->
+                <div class="checklist-item">
+                    <label class="custom-checkbox">
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                        <div class="checklist-content">
+                            <h3 class="checklist-title">スマホやPCに「ウイルスに感染しました」と表示</h3>
+                            <div class="checklist-body">
+                                <p><span class="label-badge feature">特徴</span> 連絡先やサポート番号がでる</p>
+                                <p><span class="label-badge measure">対策</span> 絶対に電話・クリックせず、そのサイトを閉じる</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="content-section" id="quiz">
+            <h2 class="section-title icon-quiz">詐欺対策クイズ</h2>
+            <p class="instruction-text">クイズに答えて、詐欺への理解度を確認しましょう。</p>
+
+            <!-- Quiz Q1 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q1. 「あなたのスマホがウイルスに感染しています。ここをタップして修復してください」という警告画面が出ました。どうする？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">画面をタップして、アプリを入れる</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">タップせず閉じて無視する</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「タップせず閉じて無視する」です。<br>
+                        これは偽の警告（フェイクアラート）です。焦らせてアプリを入れさせたり電話をかけさせたりするのが目的です。ブラウザを閉じてください。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q2. 自宅に突然、水道業者やリフォーム業者を装った人物が訪れ、無料点検を行っていると言われました。どう対応すればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, true)">すぐに断る。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">無料だから点検してもらう。</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">家族に相談してから連絡すると相手の連絡先をもらう。</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「すぐに断る」です。<br>
+                        「無料点検」と言って上がり込み、後から高額な工事契約を迫る「点検商法」の可能性があります。ドアを開けないのが安全です。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q3 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q3. スマホに「あなたが当選しました！賞金を受け取るには登録が必要です」と通知が来た。どうすればいいですか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, false)">登録する</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">無視する</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「無視する」です。<br>
+                        応募していないのに当選することはありません。個人情報を盗んだり手数料を請求する詐欺です。
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>困ったときは、一人で悩まず相談しましょう。</p>
+            <div class="emergency-contact">
+                <p>警察相談専用電話 <span class="phone-number">#9110</span></p>
+                <p>消費者ホットライン <span class="phone-number">188</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * クイズの回答を判定する関数
+         * @param {HTMLElement} buttonElement クリックされたボタン要素 (this)
+         * @param {boolean} isCorrect 正解かどうか
+         */
+        function checkAnswer(buttonElement, isCorrect) {
+            // クリックされたボタンが含まれるカード要素を取得
+            const card = buttonElement.closest('.quiz-card');
+
+            // そのカード内のフィードバック要素を取得（IDではなくクラスで検索）
+            const feedbackSection = card.querySelector('.quiz-feedback');
+            const resultText = card.querySelector('.feedback-result');
+
+            // 表示をオンにする
+            feedbackSection.style.display = 'block';
+
+            // 判定結果を表示
+            if (isCorrect) {
+                resultText.textContent = "◎ 正解です！";
+                resultText.className = "feedback-result correct";
+            } else {
+                resultText.textContent = "× 不正解です...";
+                resultText.className = "feedback-result incorrect";
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>詐欺対策ガイド - 詳細ページ</title>
+    <title>投資詐欺 - 詐欺対策ガイド</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <header class="site-header">
         <div class="container">
-            <h1>詐欺対策ガイド</h1>
+            <h1>投資詐欺</h1>
             <a href="sagitaisaku.html" class="btn-home">トップページへ戻る</a>
         </div>
     </header>
@@ -19,13 +19,13 @@
     <main class="container">
         <!-- Introduction Section -->
         <section class="content-section" id="intro">
-            <h2 class="section-title">【詐欺の種類】について</h2>
+            <h2 class="section-title">投資詐欺とは？</h2>
             <div class="card">
                 <p class="large-text">
-                    ここに詐欺の手口や特徴についての説明文が入ります。<br>
-                    高齢者の方にも読みやすいように、専門用語を避け、分かりやすい言葉で記述します。
-                    <br><br>
-                    例：「電話でお金のことを言われたら、まずは疑ってください。」
+                    「絶対に儲かる」「あなただけ特別」などの言葉で投資を勧誘し、お金や暗号資産（仮想通貨）をだまし取る詐欺です。<br>
+                    最初は信頼させるために少額の利益が出たように見せかけることもあります。<br>
+                    <br>
+                    <strong>「元本保証」「絶対に損しない」という投資話は詐欺です。</strong>
                 </p>
             </div>
         </section>
@@ -35,31 +35,31 @@
             <h2 class="section-title icon-check">被害防止チェックリスト</h2>
             <p class="instruction-text">以下の項目を確認して、当てはまるものがないかチェックしてみましょう。</p>
             <div class="card checklist-card">
-                <!-- Checklist Item Template -->
+                <!-- Checklist Item 1 -->
                 <div class="checklist-item">
                     <label class="custom-checkbox">
                         <input type="checkbox">
                         <span class="checkmark"></span>
                         <div class="checklist-content">
-                            <h3 class="checklist-title">【詐欺の例】例を記入してください（例：市役所職員を名乗る電話）</h3>
+                            <h3 class="checklist-title">「必ず儲かる」「限定投資」と言われた</h3>
                             <div class="checklist-body">
-                                <p><span class="label-badge feature">特徴</span> ここに特徴を記入します。（例：「還付金がある」と言い、ATMへ誘導する）</p>
-                                <p><span class="label-badge measure">対策</span> ここに対策を記入します。（例：電話を切って、市役所に確認する）</p>
+                                <p><span class="label-badge feature">特徴</span> 元本保証、短期間で高利益</p>
+                                <p><span class="label-badge measure">対策</span> 金融庁登録業者か確認</p>
                             </div>
                         </div>
                     </label>
                 </div>
 
-                <!-- Example Item 2 (Copy for more items) -->
+                <!-- Checklist Item 2 -->
                 <div class="checklist-item">
                     <label class="custom-checkbox">
                         <input type="checkbox">
                         <span class="checkmark"></span>
                         <div class="checklist-content">
-                            <h3 class="checklist-title">【詐欺の例】...</h3>
+                            <h3 class="checklist-title">SNSで投資を誘われる</h3>
                             <div class="checklist-body">
-                                <p><span class="label-badge feature">特徴</span> ...</p>
-                                <p><span class="label-badge measure">対策</span> ...</p>
+                                <p><span class="label-badge feature">特徴</span> 特別な儲け話・内密を求める</p>
+                                <p><span class="label-badge measure">対策</span> 会ったことない人に送金しない</p>
                             </div>
                         </div>
                     </label>
@@ -72,20 +72,41 @@
             <h2 class="section-title icon-quiz">詐欺対策クイズ</h2>
             <p class="instruction-text">クイズに答えて、詐欺への理解度を確認しましょう。</p>
 
-            <!-- Quiz Item Template -->
-            <div class="card quiz-card">       
+            <!-- Quiz Q1 -->
+            <div class="card quiz-card">
                 <div class="quiz-question">
-                    <h3>Q1. クイズの質問文がここに入ります</h3>
+                    <h3>Q1. SNSで「絶対に儲かる投資があります」と知らない人からメッセージが来ました。どうしますか？</h3>
                 </div>
                 <div class="quiz-options">
-                    <!-- checkAnswer(this, true/false) で正誤を指定します -->
-                    <button class="btn-option" onclick="checkAnswer(this, true)">選択肢 A（正解の場合）</button>
-                    <button class="btn-option" onclick="checkAnswer(this, false)">選択肢 B（不正解の場合）</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">とりあえず少額だけ振り込む</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">相手のプロフィールをよく見て判断する</button>
+                    <button class="btn-option" onclick="checkAnswer(this, true)">連絡を無視し、ブロックする</button>
                 </div>
-                <!-- IDを削除しクラスのみにしました -->
                 <div class="quiz-feedback" style="display:none;">
                     <p class="feedback-result"></p>
-                    <p class="feedback-text">解説文がここに表示されます。</p>
+                    <p class="feedback-text">
+                        正解は「連絡を無視し、ブロックする」です。<br>
+                        面識のない人からの「うまい話」は100%詐欺だと疑ってください。関わらないのが一番の対策です。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="card quiz-card">
+                <div class="quiz-question">
+                    <h3>Q2. 知り合いから「自分も儲かったから一緒にやろう」と投資話をすすめられました。どうしますか？</h3>
+                </div>
+                <div class="quiz-options">
+                    <button class="btn-option" onclick="checkAnswer(this, true)">投資内容や会社を自分で調べる</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">元本保証かどうかだけ聞いて参加する</button>
+                    <button class="btn-option" onclick="checkAnswer(this, false)">友だちなので信用してすぐお金を出す</button>
+                </div>
+                <div class="quiz-feedback" style="display:none;">
+                    <p class="feedback-result"></p>
+                    <p class="feedback-text">
+                        正解は「投資内容や会社を自分で調べる」です。<br>
+                        その知り合いも騙されている可能性があります。人間関係を利用した詐欺も多いため、必ず自分で裏付けを取りましょう。
+                    </p>
                 </div>
             </div>
         </section>

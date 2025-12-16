@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>詐欺対策</title>
+  <style>
+    :root{
+      /* Page palette */
+      --bg: #FFF8F0;       /* page background (cream) */
+      --text: #111827;     /* main text color */
+      --muted: #4b5563;
+      --accent: #D35400;   /* title area orange */
+      --danger: #b91c1c;
+      --card: #ffffff;
+      --menu-btn-bg: #ffffff;
+      --menu-text: var(--text);
+      --tile-shadow: 0 6px 14px rgba(15,23,42,0.06);
+      --radius: 12px;
+      --gap: 18px;
+      /* subtitle color for non-dark mode (improve contrast on orange) */
+      --title-sub-color: rgba(255,255,255,0.95);
+    }
+    /* responsive base font: allows scaling on mobile/desktop */
+    html { font-family: system-ui, -apple-system, 'Yu Gothic UI', 'Noto Sans JP', sans-serif; font-size: clamp(16px, 1.6vw, 20px); color:var(--text); }
+    body{ margin:0; padding:18px; background:var(--bg); }
+    .container{ max-width:1100px; margin:0 auto; }
+    header{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; }
+    .brand{ display:flex; align-items:center; gap:12px; }
+    .logo{ width:56px; height:56px; border-radius:10px; background:linear-gradient(135deg,var(--accent), #0a9f68); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; }
+    .title-text{ font-size: clamp(28px, 6vw, 64px); margin:0 0 6px 0; line-height:1.05; text-align:center; font-weight:800; }
+    .subtitle{ color:var(--title-sub-color); font-size:clamp(14px,2.2vw,18px); margin:0; font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,0.18); }
+    /* title area full-width; only contains title/subtitle/settings */
+    .title-row{ position:relative; display:flex; flex-direction:column; align-items:center; padding:20px 0; background:var(--accent); color:#fff; }
+    .title-row .container{ display:flex; align-items:center; justify-content:center; position:relative; }
+    .title-row .settings{ position:absolute; right:18px; top:50%; transform:translateY(-50%); }
+    .settings{ position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; gap:10px; align-items:center; }
+    .setting{ width:52px; height:52px; font-size:20px; border-radius:10px; border:none; background:var(--menu-btn-bg); display:flex; align-items:center; justify-content:center; color:var(--menu-text); }
+    .tel{ display:inline-block; background:var(--accent); color:#fff; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; }
+
+    /* category tiles for 6 types */
+    /* page content area (tiles) sits on cream background */
+    .container{ background:transparent; }
+    .category-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin:16px 0 22px; }
+    /* tiles follow theme variables so dark mode can style them */
+    .tile{ background:var(--card); color:var(--text); border-radius:12px; padding:18px; box-shadow:var(--tile-shadow); text-align:center; cursor:pointer; border:2px solid transparent; }
+    .tile:focus, .tile:hover{ outline:none; border-color:var(--accent); }
+    .tile h3{ margin:0; font-size:18px; color:var(--text); }
+    .tile p{ margin:8px 0 0; color:var(--muted); font-size:14px; }
+
+    /* table styles kept but responsive */
+    table{ width:100%; border-collapse:collapse; margin-top:12px; }
+    thead th{ border:1px solid #d1d5db; padding:10px; background:#f3f4f6; font-size:clamp(14px,2.8vw,20px); }
+    tbody td{ border:1px solid #e5e7eb; padding:10px; font-size:clamp(14px,2.6vw,18px); }
+
+    button{ border:none; background:transparent; cursor:pointer; }
+
+    /* visual state classes */
+    .get{ background-color:#fff3cd; }
+    .rest{ background-color:#fee2e2; }
+    .reach{ background-color:#d0ebff; }
+    .victory{ background-color:goldenrod; }
+
+    .correct{ color:var(--accent); font-weight:700; }
+    .incorrect{ color:var(--danger); font-weight:700; }
+
+    /* focus ring for accessibility */
+    :focus{ outline:4px solid #ffd54f; outline-offset:3px; border-radius:8px; }
+
+    @media(max-width:900px){
+      .category-grid{ grid-template-columns: repeat(2,1fr); }
+      header{ flex-direction:column; align-items:flex-start; gap:10px; }
+      .settings{ align-self:flex-end; }
+    }
+    @media(max-width:520px){
+      .category-grid{ grid-template-columns:1fr; }
+      .logo{ width:48px; height:48px; }
+      .tel{ padding:8px 10px; font-size:16px; }
+    }
+    /* dropdown menu for settings */
+    .menu { position:absolute; right:12px; top:calc(100% + 10px); background:var(--card); border:1px solid rgba(0,0,0,0.06); border-radius:12px; padding:12px; box-shadow:0 10px 30px rgba(2,6,23,0.12); min-width:260px; z-index:1200; display:none; }
+    .menu.open { display:block; }
+    .menu .row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 6px; }
+    .menu label { font-size:16px; color:var(--menu-text); }
+    .menu select { font-size:16px; padding:6px 8px; }
+    .menu input[type=checkbox] { transform:scale(1.25); }
+    .menu .hint { color:var(--muted); font-size:14px; margin-top:6px; }
+    .menu button.action { width:100%; margin-top:10px; padding:10px; border-radius:10px; background:var(--accent); color:#fff; border:none; font-weight:800; font-size:16px; }
+
+    /* ensure menu button text remains stable across modes (avoid abrupt color flips) */
+
+    /* dark mode variables override */
+    .dark { --bg:#0b1220; --text:#f8fafc; --muted:#cbd5e1; --card:#0f1724; --accent:#60a5fa; --menu-btn-bg:#111827; --menu-text:#f8fafc; --tile-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+  </style>
+</head>
+
+<body>
+  <div class="title-row">
+    <h1 class="title-text">詐欺対策</h1>
+    <div class="subtitle">疑わしい連絡の見分け方と相談窓口</div>
+    <div class="settings">
+      <button id="menuBtn" aria-haspopup="true" aria-expanded="false" class="setting">≡</button>
+      <div id="menu" class="menu" role="menu" aria-hidden="true">
+        <div class="row">
+          <div>
+            <label for="langSelect">言語</label>
+            <div class="hint" id="langHint">ページ内の文字を日本語／英語で表示します</div>
+          </div>
+          <select id="langSelect" aria-label="言語選択"><option value="ja">日本語</option><option value="en">English</option></select>
+        </div>
+        <div class="row">
+          <div>
+            <label for="darkToggle">ダークモード</label>
+            <div class="hint" id="darkHint">画面が暗くなり目に優しくなります</div>
+          </div>
+          <input id="darkToggle" type="checkbox" aria-label="ダークモード切替">
+        </div>
+        <div class="row">
+          <div>
+            <label for="speechToggle">音声読み上げ</label>
+            <div class="hint" id="speechHint">文章を音声で読み上げます</div>
+          </div>
+          <input id="speechToggle" type="checkbox" aria-label="音声読み上げ切替">
+        </div>
+        <button id="readBtn" class="action" aria-label="ページを読み上げる">ページを読み上げる</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+  <div class="category-grid" role="navigation" aria-label="詐欺カテゴリ">
+    <button class="tile" onclick="addPoint(0)" aria-label="オレオレ詐欺"> <h3>① オレオレ詐欺</h3><p>家族を装う電話に注意</p></button>
+    <button class="tile" onclick="addPoint(1)" aria-label="架空料金詐欺"> <h3>② 架空料金詐欺</h3><p>身に覚えのない請求に注意</p></button>
+    <button class="tile" onclick="addPoint(2)" aria-label="還付金詐欺"> <h3>③ 還付金詐欺</h3><p>還付と称する電話に注意</p></button>
+    <button class="tile" onclick="addPoint(3)" aria-label="投資詐欺"> <h3>④ 投資詐欺</h3><p>高利回りの勧誘に注意</p></button>
+    <button class="tile" onclick="addPoint(4)" aria-label="預貯金詐欺"> <h3>⑤ 預貯金詐欺</h3><p>口座に関する不審な連絡</p></button>
+    <button class="tile" onclick="addPoint(5)" aria-label="その他"> <h3>⑥ その他</h3><p>その他の不審な連絡</p></button>
+  </div>
+
+
+  </div>
+
+  <script>
+    // Menu behavior: toggles, persistence for dark mode/lang/speech, and simple read-aloud
+    (function(){
+      const menuBtn = document.getElementById('menuBtn');
+      const menu = document.getElementById('menu');
+      const darkToggle = document.getElementById('darkToggle');
+      const langSelect = document.getElementById('langSelect');
+      const speechToggle = document.getElementById('speechToggle');
+      const readBtn = document.getElementById('readBtn');
+
+      function openMenu(){ menu.classList.add('open'); menuBtn.setAttribute('aria-expanded','true'); menu.setAttribute('aria-hidden','false'); }
+      function closeMenu(){ menu.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); menu.setAttribute('aria-hidden','true'); }
+      function toggleMenu(){ menu.classList.contains('open')?closeMenu():openMenu(); }
+
+      menuBtn && menuBtn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleMenu(); });
+      document.addEventListener('click', (e)=>{ if(menu.classList.contains('open') && !menu.contains(e.target) && e.target !== menuBtn){ closeMenu(); } });
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+
+      // Dark mode persistence
+      function applyDark(v){ if(v) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); }
+      const savedDark = localStorage.getItem('jf_dark');
+      if(savedDark==='1'){ darkToggle.checked = true; applyDark(true); }
+      darkToggle && darkToggle.addEventListener('change', ()=>{ applyDark(darkToggle.checked); localStorage.setItem('jf_dark', darkToggle.checked? '1':'0'); });
+
+      // Language selection: labels for various UI parts (Japanese / English)
+      const translations = {
+        ja: {
+          title: '詐欺対策',
+          subtitle: '疑わしい連絡の見分け方と相談窓口',
+          tiles: ['① オレオレ詐欺','② 架空料金詐欺','③ 還付金詐欺','④ 投資詐欺','⑤ 預貯金詐欺','⑥ その他'],
+          tilesDesc: ['家族を装う電話に注意','身に覚えのない請求に注意','還付と称する電話に注意','高利回りの勧誘に注意','口座に関する不審な連絡','その他の不審な連絡'],
+          menu: { lang: '言語', dark: 'ダークモード', speech: '音声読み上げ', read: 'ページを読み上げる', help: '相談する' },
+          hints: { lang: 'ページ内の文字を日本語／英語で表示します', dark: '画面が暗くなり目に優しくなります', speech: '文章を音声で読み上げます' },
+          tel: '0120‑123‑456'
+        },
+        en: {
+          title: 'Fraud Prevention',
+          subtitle: 'How to spot suspicious contact & where to get help',
+          tiles: ['① Imposter Scam','② Fake Bill Scam','③ Refund Scam','④ Investment Scam','⑤ Bank Account Scam','⑥ Other'],
+          tilesDesc: ['Calls pretending to be family','Unexpected bills or invoices','Calls about refunds','High-return investment offers','Suspicious bank-related contact','Other suspicious contact'],
+          menu: { lang: 'Language', dark: 'Dark mode', speech: 'Speech', read: 'Read page aloud', help: 'Get help' },
+          hints: { lang: 'Switch page text between Japanese and English', dark: 'Makes the screen darker for comfort', speech: 'Read page text aloud' },
+          tel: '0120‑123‑456'
+        }
+      };
+      function applyLang(l){
+        const t = translations[l] || translations.ja;
+        document.querySelector('.title-text').textContent = t.title;
+        // subtitle may not exist; create or set
+        let sub = document.querySelector('.subtitle');
+        if(!sub){ sub = document.createElement('div'); sub.className='subtitle'; document.querySelector('.title-row').appendChild(sub); }
+        sub.textContent = t.subtitle;
+        document.querySelectorAll('.category-grid .tile').forEach((tile,i)=>{ tile.querySelector('h3').textContent = t.tiles[i]; tile.querySelector('p').textContent = t.tilesDesc[i]; });
+        document.querySelectorAll('#quiz-point-table thead th').forEach((th,i)=>{ th.textContent = t.tiles[i]; });
+        // menu labels
+        document.querySelector('label[for="langSelect"]').textContent = t.menu.lang;
+        document.querySelector('label[for="darkToggle"]').textContent = t.menu.dark;
+        document.querySelector('label[for="speechToggle"]').textContent = t.menu.speech;
+        document.getElementById('readBtn').textContent = t.menu.read;
+        // hints inside the menu (short helper texts)
+        const langHintEl = document.getElementById('langHint'); if(langHintEl) langHintEl.textContent = t.hints.lang;
+        const darkHintEl = document.getElementById('darkHint'); if(darkHintEl) darkHintEl.textContent = t.hints.dark;
+        const speechHintEl = document.getElementById('speechHint'); if(speechHintEl) speechHintEl.textContent = t.hints.speech;
+        // contact
+        document.querySelectorAll('.tel').forEach(el=> el.textContent = t.tel);
+      }
+      const savedLang = localStorage.getItem('jf_lang') || 'ja';
+      langSelect.value = savedLang; applyLang(savedLang);
+      langSelect.addEventListener('change', ()=>{ localStorage.setItem('jf_lang', langSelect.value); applyLang(langSelect.value); });
+
+      // Speech reading (simple implementation)
+      let synth = window.speechSynthesis;
+      function readPage(){
+        if(!synth) return alert('音声合成はこのブラウザでサポートされていません');
+        const text = Array.from(document.querySelectorAll('h1,h2,p,li')).map(n=>n.textContent).join('\n');
+        const ut = new SpeechSynthesisUtterance(text);
+        ut.lang = langSelect.value==='en'?'en-US':'ja-JP';
+        synth.cancel();
+        synth.speak(ut);
+      }
+      readBtn && readBtn.addEventListener('click', readPage);
+      // speech toggle persistance (not auto-read, just enable button)
+      const savedSpeech = localStorage.getItem('jf_speech');
+      if(savedSpeech==='1'){ speechToggle.checked = true; }
+      speechToggle && speechToggle.addEventListener('change', ()=>{ localStorage.setItem('jf_speech', speechToggle.checked? '1':'0'); });
+    })();
+
+    backgroundcolorSet(0);
+    function backgroundcolorSet(tableId) {
+      const table = document.getElementById(tableId);
+      const headers = table.getElementsByTagName("th");
+      for (let i = 0; i < headers.length; i++) {
+        if (i % 2 === 0) {
+          headers[i].style.backgroundColor = "#d1e7dd"; // Light green for even columns
+        } else {
+          headers[i].style.backgroundColor = "#f8d7da"; // Light red for odd columns
+        }
+      }
+    }
+    function addPoint(addIndex) {
+      switch (addIndex) {
+        case 0:
+          location.href="oreore.html";
+          break;
+        case 1:
+          location.href="kakuu.html";
+          break;
+        case 2:
+          location.href="kanpu.html";
+          break;
+        case 3:
+          location.href="toushi.html";
+          break;
+        case 4:
+          location.href="yochokin.html";
+          break;
+        case 5:
+          location.href="sonota.html";
+          break;
+        default:
+          console.log("不明な選択です。");
+      }
+      //location.href=`sagi${addIndex}.html`;
+    }
+  </script>
+</body>
+
+</html>
