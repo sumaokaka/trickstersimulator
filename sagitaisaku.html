@@ -1,96 +1,427 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>詐欺対策</title>
   <style>
-    :root{
+    :root {
       /* Page palette */
-      --bg: #FFF8F0;       /* page background (cream) */
-      --text: #111827;     /* main text color */
+      --bg: #FFF8F0;
+      /* page background (cream) */
+      --text: #111827;
+      /* main text color */
       --muted: #4b5563;
-      --accent: #D35400;   /* title area orange */
+      --accent: #D35400;
+      /* title area orange */
       --danger: #b91c1c;
+      --sim-gradient: linear-gradient(135deg, #F39C12, #D35400);
+      /* Warm orange gradient for better integration */
       --card: #ffffff;
       --menu-btn-bg: #ffffff;
       --menu-text: var(--text);
-      --tile-shadow: 0 6px 14px rgba(15,23,42,0.06);
+      --tile-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
       --radius: 12px;
       --gap: 18px;
       /* subtitle color for non-dark mode (improve contrast on orange) */
-      --title-sub-color: rgba(255,255,255,0.95);
+      --title-sub-color: rgba(255, 255, 255, 0.95);
     }
+
     /* responsive base font: allows scaling on mobile/desktop */
-    html { font-family: system-ui, -apple-system, 'Yu Gothic UI', 'Noto Sans JP', sans-serif; font-size: clamp(16px, 1.6vw, 20px); color:var(--text); }
-    body{ margin:0; padding:18px; background:var(--bg); }
-    .container{ max-width:1100px; margin:0 auto; }
-    header{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; }
-    .brand{ display:flex; align-items:center; gap:12px; }
-    .logo{ width:56px; height:56px; border-radius:10px; background:linear-gradient(135deg,var(--accent), #0a9f68); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; }
-    .title-text{ font-size: clamp(28px, 6vw, 64px); margin:0 0 6px 0; line-height:1.05; text-align:center; font-weight:800; }
-    .subtitle{ color:var(--title-sub-color); font-size:clamp(14px,2.2vw,18px); margin:0; font-weight:600; text-shadow:0 1px 2px rgba(0,0,0,0.18); }
+    html {
+      font-family: system-ui, -apple-system, 'Yu Gothic UI', 'Noto Sans JP', sans-serif;
+      font-size: clamp(16px, 1.6vw, 20px);
+      color: var(--text);
+    }
+
+    body {
+      margin: 0;
+      padding: 18px;
+      background: var(--bg);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #0a9f68);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .title-text {
+      font-size: clamp(28px, 6vw, 64px);
+      margin: 0 0 6px 0;
+      line-height: 1.05;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      color: var(--title-sub-color);
+      font-size: clamp(14px, 2.2vw, 18px);
+      margin: 0;
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+    }
+
     /* title area full-width; only contains title/subtitle/settings */
-    .title-row{ position:relative; display:flex; flex-direction:column; align-items:center; padding:20px 0; background:var(--accent); color:#fff; }
-    .title-row .container{ display:flex; align-items:center; justify-content:center; position:relative; }
-    .title-row .settings{ position:absolute; right:18px; top:50%; transform:translateY(-50%); }
-    .settings{ position:absolute; right:12px; top:50%; transform:translateY(-50%); display:flex; gap:10px; align-items:center; }
-    .setting{ width:52px; height:52px; font-size:20px; border-radius:10px; border:none; background:var(--menu-btn-bg); display:flex; align-items:center; justify-content:center; color:var(--menu-text); }
-    .tel{ display:inline-block; background:var(--accent); color:#fff; padding:10px 14px; border-radius:10px; font-weight:700; text-decoration:none; }
+    .title-row {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .title-row .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .title-row .settings {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .settings {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .setting {
+      width: 52px;
+      height: 52px;
+      font-size: 20px;
+      border-radius: 10px;
+      border: none;
+      background: var(--menu-btn-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--menu-text);
+    }
+
+    .tel {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+    }
 
     /* category tiles for 6 types */
     /* page content area (tiles) sits on cream background */
-    .container{ background:transparent; }
-    .category-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin:16px 0 22px; }
+    .container {
+      background: transparent;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0 22px;
+    }
+
     /* tiles follow theme variables so dark mode can style them */
-    .tile{ background:var(--card); color:var(--text); border-radius:12px; padding:18px; box-shadow:var(--tile-shadow); text-align:center; cursor:pointer; border:2px solid transparent; }
-    .tile:focus, .tile:hover{ outline:none; border-color:var(--accent); }
-    .tile h3{ margin:0; font-size:18px; color:var(--text); }
-    .tile p{ margin:8px 0 0; color:var(--muted); font-size:14px; }
+    .tile {
+      background: var(--card);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--tile-shadow);
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .tile:focus,
+    .tile:hover {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .tile h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--text);
+    }
+
+    .tile p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
     /* table styles kept but responsive */
-    table{ width:100%; border-collapse:collapse; margin-top:12px; }
-    thead th{ border:1px solid #d1d5db; padding:10px; background:#f3f4f6; font-size:clamp(14px,2.8vw,20px); }
-    tbody td{ border:1px solid #e5e7eb; padding:10px; font-size:clamp(14px,2.6vw,18px); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
 
-    button{ border:none; background:transparent; cursor:pointer; }
+    thead th {
+      border: 1px solid #d1d5db;
+      padding: 10px;
+      background: #f3f4f6;
+      font-size: clamp(14px, 2.8vw, 20px);
+    }
+
+    tbody td {
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      font-size: clamp(14px, 2.6vw, 18px);
+    }
+
+    button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
 
     /* visual state classes */
-    .get{ background-color:#fff3cd; }
-    .rest{ background-color:#fee2e2; }
-    .reach{ background-color:#d0ebff; }
-    .victory{ background-color:goldenrod; }
+    .get {
+      background-color: #fff3cd;
+    }
 
-    .correct{ color:var(--accent); font-weight:700; }
-    .incorrect{ color:var(--danger); font-weight:700; }
+    .rest {
+      background-color: #fee2e2;
+    }
+
+    .reach {
+      background-color: #d0ebff;
+    }
+
+    .victory {
+      background-color: goldenrod;
+    }
+
+    .correct {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .incorrect {
+      color: var(--danger);
+      font-weight: 700;
+    }
 
     /* focus ring for accessibility */
-    :focus{ outline:4px solid #ffd54f; outline-offset:3px; border-radius:8px; }
+    :focus {
+      outline: 4px solid #ffd54f;
+      outline-offset: 3px;
+      border-radius: 8px;
+    }
 
-    @media(max-width:900px){
-      .category-grid{ grid-template-columns: repeat(2,1fr); }
-      header{ flex-direction:column; align-items:flex-start; gap:10px; }
-      .settings{ align-self:flex-end; }
+    @media(max-width:900px) {
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .settings {
+        align-self: flex-end;
+      }
     }
-    @media(max-width:520px){
-      .category-grid{ grid-template-columns:1fr; }
-      .logo{ width:48px; height:48px; }
-      .tel{ padding:8px 10px; font-size:16px; }
+
+    @media(max-width:520px) {
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        width: 48px;
+        height: 48px;
+      }
+
+      .tel {
+        padding: 8px 10px;
+        font-size: 16px;
+      }
     }
+
     /* dropdown menu for settings */
-    .menu { position:absolute; right:12px; top:calc(100% + 10px); background:var(--card); border:1px solid rgba(0,0,0,0.06); border-radius:12px; padding:12px; box-shadow:0 10px 30px rgba(2,6,23,0.12); min-width:260px; z-index:1200; display:none; }
-    .menu.open { display:block; }
-    .menu .row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 6px; }
-    .menu label { font-size:16px; color:var(--menu-text); }
-    .menu select { font-size:16px; padding:6px 8px; }
-    .menu input[type=checkbox] { transform:scale(1.25); }
-    .menu .hint { color:var(--muted); font-size:14px; margin-top:6px; }
-    .menu button.action { width:100%; margin-top:10px; padding:10px; border-radius:10px; background:var(--accent); color:#fff; border:none; font-weight:800; font-size:16px; }
+    .menu {
+      position: absolute;
+      right: 12px;
+      top: calc(100% + 10px);
+      background: var(--card);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+      min-width: 260px;
+      z-index: 1200;
+      display: none;
+    }
+
+    .menu.open {
+      display: block;
+    }
+
+    .menu .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 6px;
+    }
+
+    .menu label {
+      font-size: 16px;
+      color: var(--menu-text);
+    }
+
+    .menu select {
+      font-size: 16px;
+      padding: 6px 8px;
+    }
+
+    .menu input[type=checkbox] {
+      transform: scale(1.25);
+    }
+
+    .menu .hint {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .menu button.action {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-weight: 800;
+      font-size: 16px;
+    }
 
     /* ensure menu button text remains stable across modes (avoid abrupt color flips) */
 
     /* dark mode variables override */
-    .dark { --bg:#0b1220; --text:#f8fafc; --muted:#cbd5e1; --card:#0f1724; --accent:#60a5fa; --menu-btn-bg:#111827; --menu-text:#f8fafc; --tile-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+    .dark {
+      --bg: #0b1220;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --card: #0f1724;
+      --accent: #60a5fa;
+      --menu-btn-bg: #111827;
+      --menu-text: #f8fafc;
+      --tile-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Simulator Promo Button */
+    .promo-area {
+      margin: 24px 0;
+    }
+
+    .promo-btn {
+      width: 100%;
+      background: var(--sim-gradient);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--tile-shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Center content on specific layout preference, or gap handles it */
+      gap: 20px;
+      text-align: left;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      /* Just in case it's an a tag, though we use button onclick */
+      border: 3px solid transparent;
+      /* Prepare for border transition */
+    }
+
+    .promo-btn:hover,
+    .promo-btn:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .promo-icon {
+      font-size: 32px;
+      background: rgba(255, 255, 255, 0.2);
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .promo-content h3 {
+      margin: 0 0 6px 0;
+      font-size: 1.25rem;
+      color: #fff;
+    }
+
+    .promo-content p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+    }
+
+    @media(max-width: 600px) {
+      .promo-btn {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+
+      .promo-content h3 {
+        font-size: 1.1rem;
+      }
+    }
   </style>
 </head>
 
@@ -106,7 +437,10 @@
             <label for="langSelect">言語</label>
             <div class="hint" id="langHint">ページ内の文字を日本語／英語で表示します</div>
           </div>
-          <select id="langSelect" aria-label="言語選択"><option value="ja">日本語</option><option value="en">English</option></select>
+          <select id="langSelect" aria-label="言語選択">
+            <option value="ja">日本語</option>
+            <option value="en">English</option>
+          </select>
         </div>
         <div class="row">
           <div>
@@ -127,21 +461,49 @@
     </div>
   </div>
   <div class="container">
-  <div class="category-grid" role="navigation" aria-label="詐欺カテゴリ">
-    <button class="tile" onclick="addPoint(0)" aria-label="オレオレ詐欺"> <h3>① オレオレ詐欺</h3><p>家族を装う電話に注意</p></button>
-    <button class="tile" onclick="addPoint(1)" aria-label="架空料金詐欺"> <h3>② 架空料金詐欺</h3><p>身に覚えのない請求に注意</p></button>
-    <button class="tile" onclick="addPoint(2)" aria-label="還付金詐欺"> <h3>③ 還付金詐欺</h3><p>還付と称する電話に注意</p></button>
-    <button class="tile" onclick="addPoint(3)" aria-label="投資詐欺"> <h3>④ 投資詐欺</h3><p>高利回りの勧誘に注意</p></button>
-    <button class="tile" onclick="addPoint(4)" aria-label="預貯金詐欺"> <h3>⑤ 預貯金詐欺</h3><p>口座に関する不審な連絡</p></button>
-    <button class="tile" onclick="addPoint(5)" aria-label="その他"> <h3>⑥ その他</h3><p>その他の不審な連絡</p></button>
-  </div>
+    <div class="category-grid" role="navigation" aria-label="詐欺カテゴリ">
+      <button class="tile" onclick="addPoint(0)" aria-label="オレオレ詐欺">
+        <h3>① オレオレ詐欺</h3>
+        <p>家族を装う電話に注意</p>
+      </button>
+      <button class="tile" onclick="addPoint(1)" aria-label="架空料金詐欺">
+        <h3>② 架空料金詐欺</h3>
+        <p>身に覚えのない請求に注意</p>
+      </button>
+      <button class="tile" onclick="addPoint(2)" aria-label="還付金詐欺">
+        <h3>③ 還付金詐欺</h3>
+        <p>還付と称する電話に注意</p>
+      </button>
+      <button class="tile" onclick="addPoint(3)" aria-label="投資詐欺">
+        <h3>④ 投資詐欺</h3>
+        <p>高利回りの勧誘に注意</p>
+      </button>
+      <button class="tile" onclick="addPoint(4)" aria-label="預貯金詐欺">
+        <h3>⑤ 預貯金詐欺</h3>
+        <p>口座に関する不審な連絡</p>
+      </button>
+      <button class="tile" onclick="addPoint(5)" aria-label="その他">
+        <h3>⑥ その他</h3>
+        <p>その他の不審な連絡</p>
+      </button>
+    </div>
+
+    <div class="promo-area">
+      <button class="promo-btn" onclick="location.href='scamsimulator.html'" aria-label="詐欺シミュレーター体験">
+        <div class="promo-icon">🎮</div>
+        <div class="promo-content">
+          <h3>詐欺シミュレーターに挑戦！</h3>
+          <p>実際の詐欺の手口をシミュレーションで体験して、防犯力を高めましょう。</p>
+        </div>
+      </button>
+    </div>
 
 
   </div>
 
   <script>
     // Menu behavior: toggles, persistence for dark mode/lang/speech, and simple read-aloud
-    (function(){
+    (function () {
       const menuBtn = document.getElementById('menuBtn');
       const menu = document.getElementById('menu');
       const darkToggle = document.getElementById('darkToggle');
@@ -149,27 +511,27 @@
       const speechToggle = document.getElementById('speechToggle');
       const readBtn = document.getElementById('readBtn');
 
-      function openMenu(){ menu.classList.add('open'); menuBtn.setAttribute('aria-expanded','true'); menu.setAttribute('aria-hidden','false'); }
-      function closeMenu(){ menu.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); menu.setAttribute('aria-hidden','true'); }
-      function toggleMenu(){ menu.classList.contains('open')?closeMenu():openMenu(); }
+      function openMenu() { menu.classList.add('open'); menuBtn.setAttribute('aria-expanded', 'true'); menu.setAttribute('aria-hidden', 'false'); }
+      function closeMenu() { menu.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); menu.setAttribute('aria-hidden', 'true'); }
+      function toggleMenu() { menu.classList.contains('open') ? closeMenu() : openMenu(); }
 
-      menuBtn && menuBtn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleMenu(); });
-      document.addEventListener('click', (e)=>{ if(menu.classList.contains('open') && !menu.contains(e.target) && e.target !== menuBtn){ closeMenu(); } });
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+      menuBtn && menuBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
+      document.addEventListener('click', (e) => { if (menu.classList.contains('open') && !menu.contains(e.target) && e.target !== menuBtn) { closeMenu(); } });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
       // Dark mode persistence
-      function applyDark(v){ if(v) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); }
+      function applyDark(v) { if (v) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark'); }
       const savedDark = localStorage.getItem('jf_dark');
-      if(savedDark==='1'){ darkToggle.checked = true; applyDark(true); }
-      darkToggle && darkToggle.addEventListener('change', ()=>{ applyDark(darkToggle.checked); localStorage.setItem('jf_dark', darkToggle.checked? '1':'0'); });
+      if (savedDark === '1') { darkToggle.checked = true; applyDark(true); }
+      darkToggle && darkToggle.addEventListener('change', () => { applyDark(darkToggle.checked); localStorage.setItem('jf_dark', darkToggle.checked ? '1' : '0'); });
 
       // Language selection: labels for various UI parts (Japanese / English)
       const translations = {
         ja: {
           title: '詐欺対策',
           subtitle: '疑わしい連絡の見分け方と相談窓口',
-          tiles: ['① オレオレ詐欺','② 架空料金詐欺','③ 還付金詐欺','④ 投資詐欺','⑤ 預貯金詐欺','⑥ その他'],
-          tilesDesc: ['家族を装う電話に注意','身に覚えのない請求に注意','還付と称する電話に注意','高利回りの勧誘に注意','口座に関する不審な連絡','その他の不審な連絡'],
+          tiles: ['① オレオレ詐欺', '② 架空料金詐欺', '③ 還付金詐欺', '④ 投資詐欺', '⑤ 預貯金詐欺', '⑥ その他'],
+          tilesDesc: ['家族を装う電話に注意', '身に覚えのない請求に注意', '還付と称する電話に注意', '高利回りの勧誘に注意', '口座に関する不審な連絡', 'その他の不審な連絡'],
           menu: { lang: '言語', dark: 'ダークモード', speech: '音声読み上げ', read: 'ページを読み上げる', help: '相談する' },
           hints: { lang: 'ページ内の文字を日本語／英語で表示します', dark: '画面が暗くなり目に優しくなります', speech: '文章を音声で読み上げます' },
           tel: '0120‑123‑456'
@@ -177,53 +539,75 @@
         en: {
           title: 'Fraud Prevention',
           subtitle: 'How to spot suspicious contact & where to get help',
-          tiles: ['① Imposter Scam','② Fake Bill Scam','③ Refund Scam','④ Investment Scam','⑤ Bank Account Scam','⑥ Other'],
-          tilesDesc: ['Calls pretending to be family','Unexpected bills or invoices','Calls about refunds','High-return investment offers','Suspicious bank-related contact','Other suspicious contact'],
+          tiles: ['① Imposter Scam', '② Fake Bill Scam', '③ Refund Scam', '④ Investment Scam', '⑤ Bank Account Scam', '⑥ Other'],
+          tilesDesc: ['Calls pretending to be family', 'Unexpected bills or invoices', 'Calls about refunds', 'High-return investment offers', 'Suspicious bank-related contact', 'Other suspicious contact'],
+          menu: { lang: 'Language', dark: 'Dark mode', speech: 'Speech', read: 'Read page aloud', help: 'Get help' },
+          hints: { lang: 'Switch page text between Japanese and English', dark: 'Makes the screen darker for comfort', speech: 'Read page text aloud' },
+          tel: '0120‑123‑456'
+        },
+        en: {
+          title: 'Fraud Prevention',
+          subtitle: 'How to spot suspicious contact & where to get help',
+          tiles: ['① Imposter Scam', '② Fake Bill Scam', '③ Refund Scam', '④ Investment Scam', '⑤ Bank Account Scam', '⑥ Other'],
+          tilesDesc: ['Calls pretending to be family', 'Unexpected bills or invoices', 'Calls about refunds', 'High-return investment offers', 'Suspicious bank-related contact', 'Other suspicious contact'],
+          promo: { title: 'Try the Scam Simulator!', desc: 'Experience real scam tactics in a simulation to improve your defense skills.' },
           menu: { lang: 'Language', dark: 'Dark mode', speech: 'Speech', read: 'Read page aloud', help: 'Get help' },
           hints: { lang: 'Switch page text between Japanese and English', dark: 'Makes the screen darker for comfort', speech: 'Read page text aloud' },
           tel: '0120‑123‑456'
         }
       };
-      function applyLang(l){
+      function applyLang(l) {
         const t = translations[l] || translations.ja;
         document.querySelector('.title-text').textContent = t.title;
         // subtitle may not exist; create or set
         let sub = document.querySelector('.subtitle');
-        if(!sub){ sub = document.createElement('div'); sub.className='subtitle'; document.querySelector('.title-row').appendChild(sub); }
+        if (!sub) { sub = document.createElement('div'); sub.className = 'subtitle'; document.querySelector('.title-row').appendChild(sub); }
         sub.textContent = t.subtitle;
-        document.querySelectorAll('.category-grid .tile').forEach((tile,i)=>{ tile.querySelector('h3').textContent = t.tiles[i]; tile.querySelector('p').textContent = t.tilesDesc[i]; });
-        document.querySelectorAll('#quiz-point-table thead th').forEach((th,i)=>{ th.textContent = t.tiles[i]; });
+        document.querySelectorAll('.category-grid .tile').forEach((tile, i) => { tile.querySelector('h3').textContent = t.tiles[i]; tile.querySelector('p').textContent = t.tilesDesc[i]; });
+
+        // promo button
+        const promoBtn = document.querySelector('.promo-btn');
+        if (promoBtn && t.promo) {
+          promoBtn.querySelector('h3').textContent = t.promo.title;
+          promoBtn.querySelector('p').textContent = t.promo.desc;
+        } else if (promoBtn && l === 'ja') {
+          // Fallback to JP hardcoded if not in object (but we should add it to object)
+          promoBtn.querySelector('h3').textContent = '詐欺シミュレーターに挑戦！';
+          promoBtn.querySelector('p').textContent = '実際の詐欺の手口をシミュレーションで体験して、防犯力を高めましょう。';
+        }
+
+        document.querySelectorAll('#quiz-point-table thead th').forEach((th, i) => { th.textContent = t.tiles[i]; });
         // menu labels
         document.querySelector('label[for="langSelect"]').textContent = t.menu.lang;
         document.querySelector('label[for="darkToggle"]').textContent = t.menu.dark;
         document.querySelector('label[for="speechToggle"]').textContent = t.menu.speech;
         document.getElementById('readBtn').textContent = t.menu.read;
         // hints inside the menu (short helper texts)
-        const langHintEl = document.getElementById('langHint'); if(langHintEl) langHintEl.textContent = t.hints.lang;
-        const darkHintEl = document.getElementById('darkHint'); if(darkHintEl) darkHintEl.textContent = t.hints.dark;
-        const speechHintEl = document.getElementById('speechHint'); if(speechHintEl) speechHintEl.textContent = t.hints.speech;
+        const langHintEl = document.getElementById('langHint'); if (langHintEl) langHintEl.textContent = t.hints.lang;
+        const darkHintEl = document.getElementById('darkHint'); if (darkHintEl) darkHintEl.textContent = t.hints.dark;
+        const speechHintEl = document.getElementById('speechHint'); if (speechHintEl) speechHintEl.textContent = t.hints.speech;
         // contact
-        document.querySelectorAll('.tel').forEach(el=> el.textContent = t.tel);
+        document.querySelectorAll('.tel').forEach(el => el.textContent = t.tel);
       }
       const savedLang = localStorage.getItem('jf_lang') || 'ja';
       langSelect.value = savedLang; applyLang(savedLang);
-      langSelect.addEventListener('change', ()=>{ localStorage.setItem('jf_lang', langSelect.value); applyLang(langSelect.value); });
+      langSelect.addEventListener('change', () => { localStorage.setItem('jf_lang', langSelect.value); applyLang(langSelect.value); });
 
       // Speech reading (simple implementation)
       let synth = window.speechSynthesis;
-      function readPage(){
-        if(!synth) return alert('音声合成はこのブラウザでサポートされていません');
-        const text = Array.from(document.querySelectorAll('h1,h2,p,li')).map(n=>n.textContent).join('\n');
+      function readPage() {
+        if (!synth) return alert('音声合成はこのブラウザでサポートされていません');
+        const text = Array.from(document.querySelectorAll('h1,h2,p,li')).map(n => n.textContent).join('\n');
         const ut = new SpeechSynthesisUtterance(text);
-        ut.lang = langSelect.value==='en'?'en-US':'ja-JP';
+        ut.lang = langSelect.value === 'en' ? 'en-US' : 'ja-JP';
         synth.cancel();
         synth.speak(ut);
       }
       readBtn && readBtn.addEventListener('click', readPage);
       // speech toggle persistance (not auto-read, just enable button)
       const savedSpeech = localStorage.getItem('jf_speech');
-      if(savedSpeech==='1'){ speechToggle.checked = true; }
-      speechToggle && speechToggle.addEventListener('change', ()=>{ localStorage.setItem('jf_speech', speechToggle.checked? '1':'0'); });
+      if (savedSpeech === '1') { speechToggle.checked = true; }
+      speechToggle && speechToggle.addEventListener('change', () => { localStorage.setItem('jf_speech', speechToggle.checked ? '1' : '0'); });
     })();
 
     backgroundcolorSet(0);
@@ -241,22 +625,22 @@
     function addPoint(addIndex) {
       switch (addIndex) {
         case 0:
-          location.href="oreore.html";
+          location.href = "oreore.html";
           break;
         case 1:
-          location.href="kakuu.html";
+          location.href = "kakuu.html";
           break;
         case 2:
-          location.href="kanpu.html";
+          location.href = "kanpu.html";
           break;
         case 3:
-          location.href="toushi.html";
+          location.href = "toushi.html";
           break;
         case 4:
-          location.href="yochokin.html";
+          location.href = "yochokin.html";
           break;
         case 5:
-          location.href="sonota.html";
+          location.href = "sonota.html";
           break;
         default:
           console.log("不明な選択です。");

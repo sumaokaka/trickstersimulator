@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>詐欺撃退シミュレーション</title>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel (JSX変換用) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        /* アニメーション定義 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .animate-bounce-in {
+            animation: bounceIn 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-200">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // ==========================================
+        // アイコンコンポーネント (Lucide代替SVG)
+        // ==========================================
+        const IconBase = ({ children, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
+        );
+        const Phone = ({ className }) => <IconBase className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></IconBase>;
+        const Shield = ({ className }) => <IconBase className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></IconBase>;
+        const AlertTriangle = ({ className }) => <IconBase className={className}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></IconBase>;
+        const RefreshCw = ({ className }) => <IconBase className={className}><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></IconBase>;
+        const MessageCircle = ({ className }) => <IconBase className={className}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></IconBase>;
+        const BadgeCheck = ({ className }) => <IconBase className={className}><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.77 2 2 0 0 1 0-2.83z"></path><path d="m9 12 2 2 4-4"></path></IconBase>;
+        const Siren = ({ className }) => <IconBase className={className}><path d="M7 12a5 5 0 0 1 5-5v0a5 5 0 0 1 5 5v6H7v-6Z"></path><path d="M5 20a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2H5v-2Z"></path><path d="M21 12h1"></path><path d="M18.5 4.5 18 5"></path><path d="M2 12h1"></path><path d="M12 2v1"></path><path d="m4.929 4.929.707.707"></path><path d="M12 12v6"></path></IconBase>;
+        const Sparkles = ({ className }) => <IconBase className={className}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path><path d="M5 3v4"></path><path d="M9 5H5"></path><path d="M19 19v4"></path><path d="M15 21h4"></path></IconBase>;
+        const MailWarning = ({ className }) => <IconBase className={className}><path d="M22 10.5V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h12.5"></path><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path><path d="M20 14v4"></path><path d="M20 22v.01"></path></IconBase>;
+        const TrendingUp = ({ className }) => <IconBase className={className}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></IconBase>;
+        const Landmark = ({ className }) => <IconBase className={className}><line x1="3" y1="22" x2="21" y2="22"></line><line x1="6" y1="18" x2="6" y2="11"></line><line x1="10" y1="18" x2="10" y2="11"></line><line x1="14" y1="18" x2="14" y2="11"></line><line x1="18" y1="18" x2="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></IconBase>;
+        const Volume2 = ({ className }) => <IconBase className={className}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></IconBase>;
+        const PhoneCall = ({ className }) => <IconBase className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path><path d="M14.05 2a9 9 0 0 1 8 7.94"></path><path d="M14.05 6A5 5 0 0 1 18 10"></path></IconBase>;
+        const Info = ({ className }) => <IconBase className={className}><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></IconBase>;
+        const X = ({ className }) => <IconBase className={className}><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></IconBase>;
+        const Home = ({ className }) => <IconBase className={className}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></IconBase>;
+
+        // ==========================================
+        // Gemini API & ヘルパー
+        // ==========================================
+        const apiKey = "AIzaSyCiB1hNqkqoMcOnP_Z2c6FlRgUUkofwNJ0"; // 必要に応じてAPIキーを設定してください
+
+        const callGemini = async (prompt, systemInstruction, isJson = false) => {
+            if (!apiKey) {
+                // APIキーがない場合のモック動作（AIモード用）
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve({
+                            speaker: 'scammer',
+                            name: 'AI犯人(デモ)',
+                            text: '（APIキーが設定されていないため、デモ応答です）\nもしもし、タカシだよ。APIキーを設定してくれれば、もっと色々な話ができるんだけどな。',
+                            options: [
+                                { text: 'APIキーを設定する', nextId: 'oreore_start', risk: 'safe' },
+                                { text: 'そのまま続ける', nextId: 'oreore_start', risk: 'high' }
+                            ]
+                        });
+                    }, 1000);
+                });
+            }
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    systemInstruction: { parts: [{ text: systemInstruction }] },
+                    generationConfig: isJson ? { responseMimeType: "application/json" } : {}
+                };
+                const response = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    }
+                );
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!text) throw new Error("No response");
+                return isJson ? JSON.parse(text) : text;
+            } catch (error) {
+                console.error("API Error:", error);
+                return null;
+            }
+        };
+
+        const speakText = (text) => {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            window.speechSynthesis.speak(utterance);
+        };
+
+        const termDictionary = {
+            '小切手': { title: '小切手（こぎって）', desc: '現金のかわりに支払いに使われる紙。詐欺では「会社の小切手をなくした」と言って、補填のためのお金を要求する手口が定番です。' },
+            '電子マネー': { title: '電子マネー', desc: 'コンビニなどで買えるプリペイドカード。犯人は「カードを買って裏面の番号を教えろ」と言ってきます。番号を教える＝お金を渡すのと同じです。' },
+            '保全口座': { title: '保全口座（ほぜんこうざ）', desc: '「あなたの資産を守るための安全な口座」という意味で使われますが、そんな口座は存在しません。犯人が用意した振込先口座のことです。' },
+            '還付金': { title: '還付金（かんぷきん）', desc: '払いすぎた税金や医療費などが戻ってくるお金のこと。市役所などが「ATMで還付金を受け取れます」と電話してくることは絶対にありません。' },
+            'ペイジー': { title: 'Pay-easy（ペイジー）', desc: 'ATMやネットバンキングで税金などを支払うサービス。詐欺では「還付金の手続き」と偽って、逆に犯人の口座へ送金させる操作をさせられます。' },
+            '示談': { title: '示談（じだん）', desc: '事件を裁判にせず、当事者同士の話し合いでお金（示談金）を払って解決すること。「息子が痴漢をした」などと嘘をつき、示談金を騙し取る手口があります。' },
+            '暗証番号': { title: '暗証番号（あんしょうばんごう）', desc: 'キャッシュカードを使うための4桁の数字。警察官や銀行員が、電話や対面で暗証番号を聞くことは絶対にありません。聞かれたら100%詐欺です。' },
+            'レターパック': { title: 'レターパック', desc: '郵便局の封筒サービス。「現金をレターパックで送れ」と言われたらすべて詐欺です。現金書留以外で現金を送ることは法律で禁止されています。' },
+            'キャッシュカード': { title: 'キャッシュカード', desc: '銀行のお金を下ろすカード。「古いカードを交換する」「警察が預かる」と言って、自宅まで受け取りに来る手口が増えています。' },
+            '累積医療費': { title: '累積医療費（るいせきいりょうひ）', desc: '「医療費がたくさん戻ってきます」と信じ込ませるために使われる難しい言葉。ATMへ誘導するための口実です。' },
+            '仮想通貨': { title: '仮想通貨（暗号資産）', desc: 'インターネット上の通貨。「必ず儲かる」などと言って投資を勧められますが、画面上の利益は偽物で、出金できないケースがほとんどです。' }
+        };
+
+        const HighlightedText = ({ text, onTermClick }) => {
+            const terms = Object.keys(termDictionary).sort((a, b) => b.length - a.length);
+            const regex = new RegExp(`(${terms.join('|')})`, 'g');
+            const parts = text.split(regex);
+            return (
+                <span>
+                    {parts.map((part, index) => {
+                        if (terms.includes(part)) {
+                            return (
+                                <button key={index} onClick={(e) => { e.stopPropagation(); onTermClick(part); }} className="inline-flex items-center mx-1 px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 font-bold border-b-2 border-blue-300 hover:bg-blue-200 transition-colors text-base align-middle">
+                                    <Info className="w-3 h-3 mr-1" />{part}
+                                </button>
+                            );
+                        }
+                        return part;
+                    })}
+                </span>
+            );
+        };
+
+        const scenarioData = {
+            'oreore_start': { speaker: 'unknown', name: '電話の相手', text: 'もしもし母さん？ オレだよオレ。\nちょっと大変なことになっちゃって…', options: [{ text: 'えっ、タカシかい？ どうしたの？', nextId: 'oreore_kamo_1', risk: 'high' }, { text: 'え、誰？ 名前を言ってちょうだい。', nextId: 'oreore_caution_1', risk: 'low' }, { text: '（無言で切る）', nextId: 'end_gate_cut', risk: 'safe' }] },
+            'oreore_kamo_1': { speaker: 'scammer', name: '自称息子', text: 'あぁ、タカシだよ。\n実は会社の小切手が入ったカバンをなくしてしまって…\n今日中に契約金が必要なんだ。クビになっちゃうよ。', options: [{ text: '大変！ いくら必要なの？', nextId: 'oreore_kamo_money', risk: 'high' }, { text: '会社の上司には相談したの？', nextId: 'oreore_kamo_boss', risk: 'medium' }] },
+            'oreore_kamo_money': { speaker: 'scammer', name: '自称息子', text: '300万必要なんだけど、上司が立て替えてくれて、あと100万足りないんだ。\n母さん、なんとか用意できないかな？', options: [{ text: 'わかった、銀行から振り込むわ。', nextId: 'end_atm_fail', risk: 'high' }, { text: '手元にある現金なら渡せるけど…', nextId: 'oreore_handover', risk: 'high' }] },
+            'oreore_kamo_boss': { speaker: 'scammer', name: '自称息子', text: '上司はカンカンだよ！\n「親に借りてでも今日中に持ってこい」って言われてるんだ。頼むよ母さん！', options: [{ text: 'わかったわ…何とかする。', nextId: 'oreore_kamo_money', risk: 'high' }, { text: 'そんなブラック企業、辞めちゃいなさい！', nextId: 'end_scold', risk: 'safe' }] },
+            'oreore_caution_1': { speaker: 'scammer', name: '電話の相手', text: '…（チッ）。オレだよ、長男のオレ。\n風邪ひいてて声が変わってるんだよ。携帯もカバンごとなくしたんだ。', options: [{ text: 'じゃあ、昔飼ってた犬の名前言ってみて？', nextId: 'oreore_check_dog', risk: 'low' }, { text: 'あらそう、お大事にね。で、何の用？', nextId: 'oreore_kamo_1', risk: 'medium' }] },
+            'oreore_check_dog': { speaker: 'scammer', name: '自称息子', text: 'えっ…ポ、ポチだろ？\nそんなことより金なんだよ！ 時間がないんだ！', options: [{ text: '正解は「タロ」よ！あんた誰！', nextId: 'end_logic_win', risk: 'safe' }, { text: 'ポチだったかしら…ごめんね。', nextId: 'oreore_kamo_money', risk: 'high' }] },
+            'oreore_handover': { speaker: 'scammer', name: '自称息子', text: 'ありがとう！ 俺は動けないから、上司の息子の「サトウ」を行かせるよ。\n玄関先で渡してくれ。', options: [{ text: 'わかった、待ってるわ。', nextId: 'end_handover_bad', risk: 'high' }, { text: '知らない人には渡せないわ。', nextId: 'end_handover_police', risk: 'safe' }] },
+            'billing_start': { speaker: 'scammer', name: 'NTTファイナンス(偽)', text: '（自動音声）\n「NTTファイナンスです。現在ご利用中の電話回線にて、未納料金が発生しております。\n法的措置へ移行します。オペレーターにお繋ぎする場合は『1』を押してください」', options: [{ text: '（焦って『1』を押す）もしもし？', nextId: 'billing_operator', risk: 'high' }, { text: '身に覚えがないわ。（切る）', nextId: 'end_ignore_success', risk: 'safe' }] },
+            'billing_operator': { speaker: 'scammer', name: '担当者(偽)', text: 'はい、担当の田中です。\nお客様の携帯電話で有料サイトの利用履歴があり、延滞金を含めて29万8000円の未払いがあります。\n本日中にお支払いがない場合、裁判所から差し押さえになります。', options: [{ text: '使ってません！ 間違いです！', nextId: 'billing_deny', risk: 'medium' }, { text: '裁判！？ どうすればいいんですか？', nextId: 'billing_panic', risk: 'high' }] },
+            'billing_deny': { speaker: 'scammer', name: '担当者(偽)', text: '誤登録の可能性もありますが、一度支払ってからでないと「退会処理」ができません。\n支払えば後で全額返金されます。まずは手続きをしてください。', options: [{ text: '返金されるなら…払います。', nextId: 'billing_method', risk: 'high' }, { text: '警察に相談してからにします。', nextId: 'end_police_consult', risk: 'safe' }] },
+            'billing_panic': { speaker: 'scammer', name: '担当者(偽)', text: '落ち着いてください。本日中に手続きすれば間に合います。\n近くのコンビニに行ってください。やり方は着いてから教えます。', options: [{ text: 'わかりました、すぐ行きます。', nextId: 'billing_convenience', risk: 'high' }, { text: '足が悪いので行けません。', nextId: 'billing_home', risk: 'medium' }] },
+            'billing_method': { speaker: 'scammer', name: '担当者(偽)', text: 'では、コンビニで「電子マネー」を30万円分購入してください。\nカード裏面の番号を電話で教えていただければ、完了です。', options: [{ text: 'わかりました。買ってきます。', nextId: 'end_emoney_bad', risk: 'high' }, { text: 'カードの番号？ なんだか怪しい…', nextId: 'end_emoney_block', risk: 'safe' }] },
+            'billing_convenience': { speaker: 'scammer', name: '担当者(偽)', text: '（コンビニ到着後）\n店員には「親戚にあげる」と言ってください。\n詐欺防止で色々聞かれますが、正直に言うと手続きが止まって裁判になりますよ。', options: [{ text: '店員に嘘をついて購入する', nextId: 'end_emoney_bad', risk: 'high' }, { text: '店員さんに画面を見せて相談する', nextId: 'end_store_help', risk: 'safe' }] },
+            'billing_home': { speaker: 'scammer', name: '担当者(偽)', text: 'それなら、特別に自宅へ集金に向かわせます。\nあるいは、銀行口座にお持ちの預金を全て「保全口座」へ移してください。', options: [{ text: '怖いわ…言う通りにします。', nextId: 'end_account_bad', risk: 'high' }, { text: '家族が帰ってくるまで待ちます。', nextId: 'end_family_wait', risk: 'safe' }] },
+            'refund_start': { speaker: 'scammer', name: '市役所職員(偽)', text: 'こちらは市役所の保険年金課です。\n過去5年分の累積医療費の過払い金、約3万6000円の還付通知を送りましたが、期限が今日までとなっております。', options: [{ text: '届いてないと思いますけど…', nextId: 'refund_letter', risk: 'medium' }, { text: 'あら、お金が戻るの？', nextId: 'refund_atm', risk: 'high' }] },
+            'refund_letter': { speaker: 'scammer', name: '市役所職員(偽)', text: 'おかしいですね。郵便事故かもしれません。\n本来は窓口での手続きですが、期限が本日中なので、特別に無人ATMで手続きできるようにします。', options: [{ text: 'ATMで受け取れるんですか？', nextId: 'refund_atm', risk: 'high' }, { text: '来週、窓口に行きますので結構です。', nextId: 'end_window_safe', risk: 'safe' }] },
+            'refund_atm': { speaker: 'scammer', name: '市役所職員(偽)', text: 'はい。お近くのスーパーやコンビニのATMへ行ってください。\n着いたら、私の携帯番号（090-xxxx）へお電話ください。操作方法をご案内します。', options: [{ text: 'わかりました。通帳とカードを持って行きます。', nextId: 'refund_instruction', risk: 'high' }, { text: '夫に車で連れて行ってもらいます。', nextId: 'refund_husband', risk: 'low' }] },
+            'refund_instruction': { speaker: 'scammer', name: '市役所職員(偽)', text: '（ATM到着後）\n私が言う通りにボタンを押してください。\nまず「残高照会」を押して…次に「振込」ボタンを押してください。これが還付の手続きボタンです。', options: [{ text: '「振込」？ お金を送ることになりませんか？', nextId: 'refund_doubt', risk: 'low' }, { text: 'はい、押しました。', nextId: 'refund_transfer', risk: 'high' }] },
+            'refund_doubt': { speaker: 'scammer', name: '市役所職員(偽)', text: 'いえいえ、これは「あなたの口座に振り込む」という意味のボタンなんですよ。\n機械が古いとそう表示されるんです。安心して進めてください。', options: [{ text: 'そうですか…信じて押します。', nextId: 'end_refund_bad', risk: 'high' }, { text: 'やっぱり変です。銀行員さんを呼びます！', nextId: 'end_bank_help', risk: 'safe' }] },
+            'refund_husband': { speaker: 'scammer', name: '市役所職員(偽)', text: 'あ、いえ、お一人でお願いします！\n個人情報の問題がありますので、ご本人様以外がいるとエラーが出てしまいます。', options: [{ text: 'そんな制度あるわけないでしょ！（切る）', nextId: 'end_logic_win', risk: 'safe' }, { text: 'じゃあ一人で行きます。', nextId: 'refund_instruction', risk: 'high' }] },
+            'refund_transfer': { speaker: 'scammer', name: '市役所職員(偽)', text: 'では、こちらの管理番号「998765」を入力して、確認ボタンを押してください。\n（※実はこれが振込金額になる）', options: [{ text: '入力しました。', nextId: 'end_refund_bad', risk: 'high' }] },
+            'invest_start': { speaker: 'scammer', name: '自称アナリスト', text: '（SNSやLINEで）\nこんにちは。「先生」の投資グループへようこそ。\n今、AIを使った新しい仮想通貨取引システムで、月利20%が確実に出ています。あなたも参加しませんか？', options: [{ text: 'すごい！ 詳しく教えてください。', nextId: 'invest_detail', risk: 'high' }, { text: 'うまい話には裏があるから興味ないわ。', nextId: 'end_ignore_success', risk: 'safe' }] },
+            'invest_detail': { speaker: 'scammer', name: '自称アナリスト', text: '最初は少額の10万円からで大丈夫です。\n私のアプリ上の画面を見てください。昨日入れた人が、もう11万円になっていますよ。', options: [{ text: '本当だ、増えてる！ やってみます。', nextId: 'invest_try', risk: 'high' }, { text: '画面なんて偽造できますよね？', nextId: 'end_logic_win', risk: 'safe' }] },
+            'invest_try': { speaker: 'scammer', name: '自称アナリスト', text: '（数週間後…画面上では利益が出ている）\nおめでとうございます！ 資産が倍になりましたね。\n今なら「ゴールド会員」になれます。追加で500万円投資すれば、さらに利益率が上がりますよ。', options: [{ text: '退職金を解約して振り込みます！', nextId: 'end_invest_bad', risk: 'high' }, { text: '一度、利益分を引き出したいのですが。', nextId: 'invest_withdraw', risk: 'medium' }] },
+            'invest_withdraw': { speaker: 'scammer', name: '自称アナリスト', text: '引き出しには「税金」と「保証金」の前払いが必要です。\n利益の20%にあたる100万円を先に振り込んでください。そうすれば全額出金できます。', options: [{ text: '利益から引いてくれればいいのに…払います。', nextId: 'end_invest_double_bad', risk: 'high' }, { text: 'おかしい。詐欺だわ！（警察へ）', nextId: 'end_police_consult', risk: 'safe' }] },
+            'savings_start': { speaker: 'police', name: '警察官(偽)', text: '〇〇警察署の生活安全課です。\n詐欺グループを逮捕したのですが、押収した名簿の中にあなたの名前と口座情報がありました。\n口座が悪用されています。', options: [{ text: 'ええっ！ 私も捕まるんですか？', nextId: 'savings_fear', risk: 'high' }, { text: '本当ですか？ 担当者名を教えてください。', nextId: 'savings_check', risk: 'low' }] },
+            'savings_fear': { speaker: 'police', name: '警察官(偽)', text: 'あなたは被害者ですが、今のままだと全財産が引き出されてしまいます。\n保護するために、キャッシュカードを新しいものに変更する必要があります。', options: [{ text: 'どうすればいいですか？', nextId: 'savings_method', risk: 'high' }, { text: '銀行に行って手続きします。', nextId: 'savings_bank_block', risk: 'medium' }] },
+            'savings_check': { speaker: 'police', name: '警察官(偽)', text: '（焦り）捜査の機密事項なので詳しくは言えません！\nとにかく急がないと口座が空になりますよ！', options: [{ text: '一度切って、警察署に確認します。', nextId: 'end_police_reverse', risk: 'safe' }, { text: '怖い…わかりました、話を聞きます。', nextId: 'savings_method', risk: 'high' }] },
+            'savings_bank_block': { speaker: 'police', name: '警察官(偽)', text: '銀行員もグルかもしれません！ 銀行には行かないでください。\n金融庁の職員を自宅に向かわせますので、カードを渡してください。', options: [{ text: '銀行員が犯人…！？ わかりました。', nextId: 'savings_visit', risk: 'high' }, { text: 'そんなの信じられません。', nextId: 'end_gate_cut', risk: 'safe' }] },
+            'savings_method': { speaker: 'police', name: '警察官(偽)', text: '今から私服警官が封筒を持ってご自宅へ伺います。\nカードと暗証番号を書いた紙を封筒に入れ、保管しておいてください。', options: [{ text: 'わかりました。', nextId: 'savings_visit', risk: 'high' }] },
+            'savings_visit': { speaker: 'scammer', name: '受け子', text: '（自宅玄関）\n警察から来ました。こちらの封筒にカードを入れて、封印のために印鑑を持ってきてください。\n（印鑑を取りに行っている間に封筒をすり替える手口）', options: [{ text: '印鑑を取ってきます（目を離す）。', nextId: 'end_card_switch', risk: 'high' }, { text: '絶対に渡しません！ 帰ってください！', nextId: 'end_handover_police', risk: 'safe' }] },
+            'end_atm_fail': { type: 'bad', title: '【Bad End】ATM振込被害', desc: '犯人の口座にお金を振り込んでしまいました。\n「電話でATM操作」は100%詐欺です！', rank: 'D' },
+            'end_handover_bad': { type: 'bad', title: '【Bad End】現金手渡し被害', desc: '自宅に来た犯人に現金を渡してしまいました。\n息子本人以外には絶対に渡してはいけません。', rank: 'D' },
+            'end_emoney_bad': { type: 'bad', title: '【Bad End】電子マネー詐欺被害', desc: 'コンビニでカードを購入し、番号を教えてしまいました。\n番号を教えることは、現金を送るのと同じです。', rank: 'D' },
+            'end_account_bad': { type: 'bad', title: '【Bad End】資産全額消失', desc: '犯人の口座に全財産を送金してしまいました。\n「保全口座」などというものは存在しません。', rank: 'D' },
+            'end_refund_bad': { type: 'bad', title: '【Bad End】還付金詐欺被害', desc: 'お金が戻るつもりが、逆に振り込んでしまいました。\n「還付金」がATMで戻ることは絶対にありません。', rank: 'D' },
+            'end_invest_bad': { type: 'bad', title: '【Bad End】投資詐欺被害', desc: '画面上の利益を信じて大金を失いました。\nSNSで勧誘される投資話は詐欺です。', rank: 'D' },
+            'end_invest_double_bad': { type: 'bad', title: '【Bad End】二重被害', desc: '出金のための手数料まで騙し取られました。\n引き出しにお金を要求するのは典型的な詐欺の手口です。', rank: 'D' },
+            'end_card_switch': { type: 'bad', title: '【Bad End】すり替え盗難', desc: '目を離した隙に、偽物の封筒とすり替えられました。\n警察がカードを預かることは絶対にありません。', rank: 'D' },
+            'end_gate_cut': { type: 'good', title: '【Aランク】門前払い', desc: '素晴らしい！ 怪しい電話はすぐ切るのが一番の対策です。', rank: 'A' },
+            'end_scold': { type: 'good', title: '【Aランク】一喝撃退', desc: '毅然とした態度で断りました。犯人も諦めて逃げ出しました。', rank: 'A' },
+            'end_ignore_success': { type: 'good', title: '【Aランク】完全無視', desc: '身に覚えのない話には乗らないのが正解です。', rank: 'A' },
+            'end_logic_win': { type: 'good', title: '【Sランク】完全論破', desc: '矛盾を指摘して見破りました！ 素晴らしい防犯意識です。', rank: 'S' },
+            'end_police_reverse': { type: 'good', title: '【Sランク】逆探知風撃退', desc: '「自分で調べてかけ直す」は最強の防御策です。', rank: 'S' },
+            'end_police_consult': { type: 'good', title: '【Sランク】警察へ相談', desc: '自分だけで判断せず、警察に相談できました。被害未然防止です！', rank: 'S' },
+            'end_store_help': { type: 'good', title: '【Sランク】店員さんとの連携', desc: 'コンビニ店員さんの忠告を聞き入れ、被害を防ぎました。', rank: 'S' },
+            'end_bank_help': { type: 'good', title: '【Sランク】銀行員さんとの連携', desc: 'おかしいと思って銀行員を呼んだ判断がお見事です。', rank: 'S' },
+            'end_window_safe': { type: 'good', title: '【Aランク】窓口へ誘導', desc: '「ATMではなく窓口で行く」と言ったことで、犯人は逃げ出しました。', rank: 'A' },
+            'end_emoney_block': { type: 'good', title: '【Aランク】電子マネー阻止', desc: 'カード番号を聞く手口を知っていたおかげで助かりました。', rank: 'A' },
+            'end_family_wait': { type: 'good', title: '【Aランク】家族待ち', desc: '「一人の時」を狙う犯人に対し、家族の帰宅を待つ判断が功を奏しました。', rank: 'A' },
+            'end_handover_police': { type: 'good', title: '【Sランク】水際阻止', desc: '受け子が来た瞬間に拒否しました。警察に通報しましょう。', rank: 'S' }
+        };
+
+        const FraudSimulationApp = () => {
+            const [currentNodeId, setCurrentNodeId] = useState(null);
+            const [history, setHistory] = useState([]);
+            const [gameStatus, setGameStatus] = useState('menu');
+            const [mode, setMode] = useState('oreore');
+            const [isLoading, setIsLoading] = useState(false);
+            const [aiFeedback, setAiFeedback] = useState(null);
+            const [selectedTerm, setSelectedTerm] = useState(null);
+            const [inputText, setInputText] = useState("");
+            const [inputMode, setInputMode] = useState("select");
+            const endRef = useRef(null);
+
+            useEffect(() => {
+                endRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, [history, currentNodeId, isLoading, aiFeedback, inputMode]);
+
+            const startGame = async (selectedMode) => {
+                setMode(selectedMode);
+                setHistory([]);
+                setAiFeedback(null);
+                setGameStatus('playing');
+                setInputMode("select");
+                setInputText("");
+                setSelectedTerm(null);
+
+                if (selectedMode !== 'ai') {
+                    setCurrentNodeId(`${selectedMode}_start`);
+                } else {
+                    setIsLoading(true);
+                    const systemPrompt = `あなたは日本の高齢者を騙そうとする詐欺師です。オレオレ詐欺、還付金詐欺、架空請求など、ランダムに手口を選んでロールプレイを開始してください。専門用語（電子マネー、ペイジー、保全口座、還付金、示談、小切手など）を会話に混ぜて、ユーザーに「これは何？」と思わせるように誘導してください。以下のJSON形式で出力してください：{"speaker": "scammer", "name": "役柄", "text": "第一声", "options": [{"text": "騙されそうな反応", "risk": "high"}, {"text": "警戒した反応", "risk": "medium"}, {"text": "撃退反応", "risk": "safe"}]}`;
+                    const result = await callGemini("詐欺の電話をかけてください。", systemPrompt, true);
+                    setIsLoading(false);
+                    if (result) {
+                        setCurrentNodeId(result);
+                    } else {
+                        setMode('oreore');
+                        setCurrentNodeId('oreore_start');
+                    }
+                }
+            };
+
+            const handleOptionClick = async (option) => {
+                await processNextTurn(option.text, option.nextId);
+            };
+
+            const handleFreeInput = async () => {
+                if (!inputText.trim()) return;
+                const text = inputText;
+                setInputText("");
+                await processNextTurn(text, null);
+            };
+
+            const processNextTurn = async (userText, nextId) => {
+                let currentData = mode !== 'ai' ? scenarioData[currentNodeId] : currentNodeId;
+                const newHistory = [...history, { sender: 'enemy', name: currentData.name || '相手', text: currentData.text, speakerType: currentData.speaker }, { sender: 'me', name: '自分', text: userText }];
+                setHistory(newHistory);
+
+                if (mode !== 'ai') {
+                    const nextNode = scenarioData[nextId];
+                    if (nextNode.type === 'bad' || nextNode.type === 'good') {
+                        setCurrentNodeId(nextId);
+                        setGameStatus('ended');
+                    } else {
+                        setCurrentNodeId(nextId);
+                    }
+                } else {
+                    setIsLoading(true);
+                    const historyText = newHistory.slice(-6).map(h => `${h.name}: ${h.text}`).join("\n");
+                    const systemPrompt = `あなたは詐欺師です。会話履歴を元に次の展開を生成せよ。【重要：終了判定ルール】1. ユーザーが「警察に通報する」「通報します」「110番」などと言った場合：即座に恐れをなして切断し、"isEnded": true, "endType": "good", "endRank": "S" にしてください。2. ユーザーが矛盾を突いたり、論破した場合：捨て台詞を吐いて切断し、"isEnded": true, "endType": "good", "endRank": "S" にしてください。3. ユーザーが完全に騙されて、送金やカード手渡しを完了した場合："isEnded": true, "endType": "bad", "endRank": "D" にしてください。ユーザーの入力が「${userText}」です。これに対してリアクションしてください。出力JSON形式:{"speaker": "scammer" | "police", "name": "名前", "text": "セリフ", "isEnded": boolean, "endType": "bad" | "good", "endTitle": "終了タイトル", "endDesc": "終了説明", "endRank": "S" | "A" | "D", "options": [ {"text": "選択肢1"}, {"text": "選択肢2"}, {"text": "選択肢3"} ]}`;
+                    const result = await callGemini(`会話履歴:\n${historyText}\n\nユーザー入力: ${userText}\n次を生成。`, systemPrompt, true);
+                    setIsLoading(false);
+                    if (result) {
+                        if (result.isEnded) {
+                            setCurrentNodeId({ type: result.endType || 'bad', title: result.endTitle || '終了', desc: result.endDesc || '終了しました', rank: result.endRank || 'B' });
+                            setGameStatus('ended');
+                        } else {
+                            setCurrentNodeId(result);
+                        }
+                    }
+                }
+            };
+
+            const getAiFeedback = async () => {
+                setIsLoading(true);
+                const historyText = history.map(h => `${h.sender === 'me' ? 'ユーザー' : '犯人'}: ${h.text}`).join("\n");
+                const prompt = `会話ログを分析し、防犯アドバイスを生成してください(200字以内)。\nログ:\n${historyText}`;
+                const feedback = await callGemini(prompt, "防犯アドバイザー");
+                setAiFeedback(feedback);
+                setIsLoading(false);
+            };
+
+            const getCurrentNode = () => {
+                if (mode !== 'ai') return scenarioData[currentNodeId];
+                return currentNodeId;
+            };
+
+            const currentNode = getCurrentNode();
+
+            // Menu Button Component
+            const MenuButton = ({ onClick, icon, title, desc, color }) => (
+                <button onClick={onClick} className={`w-full py-3 px-4 border-2 rounded-xl shadow-sm transition-all active:scale-95 flex items-center gap-4 text-left ${color}`}>
+                    <div className="bg-white p-2 rounded-full shadow-sm shrink-0">{icon}</div>
+                    <div><div className="font-bold text-gray-800">{title}</div><div className="text-xs text-gray-500">{desc}</div></div>
+                </button>
+            );
+
+            return (
+                <div className="min-h-screen bg-slate-200 flex items-center justify-center p-2 font-sans text-gray-800">
+                    <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl overflow-hidden flex flex-col h-[95vh] border-4 border-slate-300 relative">
+                        <div className="bg-slate-800 p-3 text-white flex items-center justify-between shrink-0 shadow-md z-10">
+                            <div className="flex items-center gap-2"><Shield className="w-5 h-5 text-yellow-400" /><h1 className="text-lg font-bold">詐欺撃退シム</h1></div>
+                            <button onClick={() => location.href = 'sagitaisaku.html'} className="text-gray-400 hover:text-white transition-colors p-1" title="ホームに戻る">
+                                <Home className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {selectedTerm && termDictionary[selectedTerm] && (
+                            <div className="absolute inset-0 bg-black/60 z-50 flex items-center justify-center p-4 animate-fade-in">
+                                <div className="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl relative border-4 border-indigo-200">
+                                    <button onClick={() => setSelectedTerm(null)} className="absolute top-2 right-2 p-2 bg-gray-100 rounded-full hover:bg-gray-200 text-gray-600"><X className="w-5 h-5" /></button>
+                                    <div className="flex flex-col items-center text-center">
+                                        <Info className="w-12 h-12 text-indigo-500 mb-3" />
+                                        <h3 className="text-xl font-bold text-indigo-900 mb-4 border-b-2 border-indigo-100 pb-2 w-full">{termDictionary[selectedTerm].title}</h3>
+                                        <p className="text-lg text-gray-700 leading-relaxed font-medium">{termDictionary[selectedTerm].desc}</p>
+                                        <button onClick={() => setSelectedTerm(null)} className="mt-6 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-lg">閉じる</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {gameStatus === 'menu' && (
+                            <div className="flex-1 overflow-y-auto p-4 bg-slate-50">
+                                <h2 className="text-xl font-bold text-center text-slate-700 mb-4 mt-2">手口を選んでトレーニング</h2>
+                                <div className="grid grid-cols-1 gap-3">
+                                    <MenuButton onClick={() => startGame('oreore')} icon={<Phone className="w-6 h-6 text-red-500" />} title="オレオレ詐欺" desc="「カバン無くした」は詐欺！" color="border-red-200 bg-red-50 hover:bg-red-100" />
+                                    <MenuButton onClick={() => startGame('billing')} icon={<MailWarning className="w-6 h-6 text-orange-500" />} title="架空料金請求" desc="「未納」「裁判」で脅す手口" color="border-orange-200 bg-orange-50 hover:bg-orange-100" />
+                                    <MenuButton onClick={() => startGame('refund')} icon={<RefreshCw className="w-6 h-6 text-green-500" />} title="還付金詐欺" desc="「ATMで返金」は絶対嘘！" color="border-green-200 bg-green-50 hover:bg-green-100" />
+                                    <MenuButton onClick={() => startGame('invest')} icon={<TrendingUp className="w-6 h-6 text-blue-500" />} title="投資・ロマンス詐欺" desc="「絶対儲かる」SNSの勧誘" color="border-blue-200 bg-blue-50 hover:bg-blue-100" />
+                                    <MenuButton onClick={() => startGame('savings')} icon={<Landmark className="w-6 h-6 text-indigo-500" />} title="預貯金詐欺" desc="偽警察「カード預かります」" color="border-indigo-200 bg-indigo-50 hover:bg-indigo-100" />
+                                    <MenuButton onClick={() => startGame('ai')} icon={<Sparkles className="w-6 h-6 text-purple-500" />} title="AI無限・自由入力" desc="自分で会話を入力して対決！" color="border-purple-200 bg-purple-50 hover:bg-purple-100" />
+                                </div>
+                            </div>
+                        )}
+
+                        {(gameStatus === 'playing' || gameStatus === 'ended') && (
+                            <div className="flex-1 overflow-y-auto p-3 bg-slate-100 space-y-4">
+                                {history.map((msg, index) => (
+                                    <div key={index} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`flex flex-col max-w-[90%] ${msg.sender === 'me' ? 'items-end' : 'items-start'}`}>
+                                            <span className="text-xs font-bold text-gray-500 mb-1 ml-1">{msg.name}</span>
+                                            <div className={`px-4 py-2 rounded-2xl text-base leading-relaxed whitespace-pre-wrap shadow-sm ${msg.sender === 'me' ? 'bg-blue-600 text-white rounded-tr-none' : msg.speakerType === 'police' ? 'bg-white border-l-4 border-indigo-500 text-gray-900 rounded-tl-none' : 'bg-white border-l-4 border-red-400 text-gray-900 rounded-tl-none'}`}>
+                                                {msg.sender === 'enemy' ? <HighlightedText text={msg.text} onTermClick={setSelectedTerm} /> : msg.text}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {isLoading && <div className="flex justify-start animate-pulse"><div className="bg-gray-200 px-4 py-2 rounded-2xl rounded-tl-none text-gray-500 text-sm">入力中...</div></div>}
+                                {gameStatus === 'playing' && !isLoading && currentNode && (
+                                    <div className="flex justify-start animate-fade-in-up pb-2">
+                                        <div className="flex flex-col max-w-[95%] items-start">
+                                            <div className="flex items-center gap-1 mb-1 w-full justify-between">
+                                                <div className="flex items-center gap-1">
+                                                    {currentNode.speaker === 'police' ? <BadgeCheck className="w-4 h-4 text-indigo-600" /> : <Phone className="w-4 h-4 text-red-500" />}
+                                                    <span className="text-xs text-gray-600 font-bold">{currentNode.name}</span>
+                                                </div>
+                                                <button onClick={() => speakText(currentNode.text)} className="p-1 bg-gray-200 rounded-full hover:bg-gray-300 text-gray-600" title="読み上げる"><Volume2 className="w-4 h-4" /></button>
+                                            </div>
+                                            <div className={`px-5 py-4 rounded-2xl text-lg font-bold leading-relaxed whitespace-pre-wrap shadow-md rounded-tl-none ${currentNode.speaker === 'police' ? 'bg-indigo-50 border-2 border-indigo-200 text-slate-800' : 'bg-red-50 border-2 border-red-200 text-slate-800'}`}>
+                                                <HighlightedText text={currentNode.text} onTermClick={setSelectedTerm} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {gameStatus === 'ended' && !isLoading && (
+                                    <div className="mt-4 animate-bounce-in space-y-3 pb-6">
+                                        <div className={`p-4 rounded-xl text-center border-2 ${currentNode.type === 'good' ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}`}>
+                                            <div className="flex justify-center mb-2">{currentNode.type === 'good' ? <Shield className="w-12 h-12 text-green-500" /> : <AlertTriangle className="w-12 h-12 text-red-500" />}</div>
+                                            <h2 className={`text-xl font-bold mb-1 ${currentNode.type === 'good' ? 'text-green-700' : 'text-red-700'}`}>{currentNode.title}</h2>
+                                            <div className="text-3xl font-black mb-2 text-slate-700">ランク：{currentNode.rank}</div>
+                                            <p className="text-sm text-gray-700 mb-4 text-left bg-white/60 p-3 rounded">{currentNode.desc}</p>
+                                            {!aiFeedback ? (
+                                                <button onClick={getAiFeedback} className="w-full mb-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold flex items-center justify-center gap-2 text-sm shadow-sm"><Sparkles className="w-4 h-4" />AIコーチのアドバイス</button>
+                                            ) : (
+                                                <div className="mb-4 bg-purple-50 border border-purple-200 p-3 rounded text-left text-sm"><div className="flex items-center gap-1 mb-1 text-purple-800 font-bold"><Sparkles className="w-3 h-3" /> アドバイス</div><p className="text-gray-800 leading-relaxed">{aiFeedback}</p></div>
+                                            )}
+                                            <button onClick={() => setGameStatus('menu')} className="w-full py-3 bg-slate-600 hover:bg-slate-700 text-white rounded-full font-bold text-lg flex items-center justify-center gap-2 shadow-md"><RefreshCw className="w-5 h-5" />メニューへ</button>
+                                        </div>
+                                    </div>
+                                )}
+                                <div ref={endRef} />
+                            </div>
+                        )}
+
+                        {gameStatus === 'playing' && !isLoading && currentNode && (
+                            <div className="bg-white border-t border-gray-200 p-2 pb-6 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-20">
+                                {mode === 'ai' && (
+                                    <div className="flex justify-center mb-2 gap-2">
+                                        <button onClick={() => setInputMode('select')} className={`px-3 py-1 rounded-full text-xs font-bold ${inputMode === 'select' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500'}`}>選択肢</button>
+                                        <button onClick={() => setInputMode('text')} className={`px-3 py-1 rounded-full text-xs font-bold ${inputMode === 'text' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500'}`}>自由入力</button>
+                                    </div>
+                                )}
+                                {(mode !== 'ai' || inputMode === 'select') && currentNode?.options && (
+                                    <div className="flex flex-col gap-2">
+                                        <p className="text-center text-xs text-gray-400 font-bold mb-1">▼ 返信を選んでください ▼</p>
+                                        {currentNode.options.map((option, idx) => (
+                                            <button key={idx} onClick={() => handleOptionClick(option)} className="w-full py-3 px-3 bg-white border border-blue-200 hover:bg-blue-50 text-blue-900 rounded-lg text-sm font-bold text-left transition-all active:scale-95 shadow-sm flex items-center"><MessageCircle className="w-4 h-4 mr-2 text-blue-400 shrink-0" />{option.text}</button>
+                                        ))}
+                                    </div>
+                                )}
+                                {mode === 'ai' && inputMode === 'text' && (
+                                    <div className="flex flex-col gap-2">
+                                        <p className="text-center text-xs text-gray-400 font-bold mb-1">▼ 自由に返信を入力 ▼</p>
+                                        <div className="flex gap-2">
+                                            <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} placeholder="例：あんた誰？警察呼ぶわよ！" className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" onKeyPress={(e) => e.key === 'Enter' && handleFreeInput()} />
+                                            <button onClick={handleFreeInput} disabled={!inputText.trim()} className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-sm disabled:opacity-50">送信</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<FraudSimulationApp />);
+    </script>
+</body>
+
+</html>
