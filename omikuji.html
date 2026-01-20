@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>防犯おみくじ - ガードワン</title>
+<style>
+       body {
+           background-color: #FFF9E6; /* 温かみのある背景色 */
+           font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           justify-content: center;
+           min-height: 100vh;
+           margin: 0;
+           overflow: hidden;
+       }
+       h1 { color: #8B4513; margin-bottom: 10px; font-size: 24px; }
+       #game-container { position: relative; width: 350px; height: 450px; }
+       canvas {
+           background: #fff;
+           border: 8px solid #E5C455;
+           border-radius: 30px;
+           box-shadow: 0 10px 0 #C4A746;
+           cursor: pointer;
+           touch-action: manipulation;
+       }
+       .ui-layer {
+           position: absolute;
+           bottom: 20px;
+           width: 100%;
+           text-align: center;
+           pointer-events: none;
+       }
+       #result-card {
+           position: fixed;
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%) scale(0);
+           width: 80%;
+           max-width: 300px;
+           background: white;
+           border: 5px solid #FFD700;
+           border-radius: 20px;
+           padding: 20px;
+           text-align: center;
+           transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+           z-index: 100;
+           box-shadow: 0 0 0 999px rgba(0,0,0,0.5);
+       }
+       #result-card.show { transform: translate(-50%, -50%) scale(1); }
+       .btn {
+           background: #FF6B6B;
+           color: white;
+           border: none;
+           padding: 10px 20px;
+           border-radius: 50px;
+           font-size: 18px;
+           font-weight: bold;
+           cursor: pointer;
+           margin-top: 15px;
+           pointer-events: auto;
+       }
+</style>
+</head>
+<body>
+<h1>🐶 ガードワンの防犯おみくじ</h1>
+<div id="game-container">
+<canvas id="omikujiCanvas" width="350" height="450"></canvas>
+<div class="ui-layer">
+<p style="font-weight: bold; color: #666;">タップして箱を振るワン！</p>
+</div>
+</div>
+<div id="result-card" id="resultCard">
+<h2 id="luckRank" style="font-size: 28px; margin: 10px 0; color: #E74C3C;"></h2>
+<p id="luckDesc" style="font-size: 16px; line-height: 1.6;"></p>
+<div style="border-top: 1px dashed #ccc; margin: 15px 0;"></div>
+<p id="luckAction" style="font-weight: bold; color: #27AE60;"></p>
+<button class="btn" onclick="closeResult()">もう一度</button>
+</div>
+<script>
+       const canvas = document.getElementById('omikujiCanvas');
+       const ctx = canvas.getContext('2d');
+       const card = document.getElementById('result-card');
+       let isShaking = false;
+       let shakeTime = 0;
+       const results = [
+           { rank: "防犯大吉", desc: "あんたの警戒心は最高だ！詐欺師も尻尾を巻いて逃げ出すワン！", action: "合言葉を家族と決めよう" },
+           { rank: "留守電吉", desc: "知らない番号は『宝くじの当選』じゃなくて『罠』だと思えば安泰だワン。", action: "常に留守電にしておこう" },
+           { rank: "確認中吉", desc: "焦らす電話が来たら、まずは美味しいお茶を一杯飲む余裕を持つワン。", action: "1分間、電話を置いて待とう" },
+           { rank: "相談末吉", desc: "独りで悩むのは詐欺師の思うツボ。周りを頼る勇気が福を呼ぶワン。", action: "警察相談電話「#9110」を覚えよう" }
+       ];
+       // 簡易描画：ガードワン
+       function draw(offsetY = 0, angle = 0) {
+           ctx.clearRect(0, 0, canvas.width, canvas.height);
+           ctx.save();
+           ctx.translate(175, 225 + offsetY);
+           ctx.rotate(angle);
+           // 体
+           ctx.fillStyle = "#F3E5AB";
+           ctx.beginPath();
+           ctx.ellipse(0, 50, 60, 80, 0, 0, Math.PI * 2);
+           ctx.fill();
+           // 顔
+           ctx.beginPath();
+           ctx.arc(0, -30, 70, 0, Math.PI * 2);
+           ctx.fill();
+           // 目
+           ctx.fillStyle = "#333";
+           ctx.beginPath(); ctx.arc(-25, -40, 8, 0, Math.PI * 2); ctx.fill();
+           ctx.beginPath(); ctx.arc(25, -40, 8, 0, Math.PI * 2); ctx.fill();
+           // 鼻と口
+           ctx.beginPath(); ctx.arc(0, -15, 6, 0, Math.PI * 2); ctx.fill();
+           ctx.strokeStyle = "#333"; ctx.lineWidth = 2;
+           ctx.beginPath(); ctx.arc(0, -10, 10, 0.2, Math.PI - 0.2); ctx.stroke();
+           // おみくじ箱
+           ctx.fillStyle = "#8B4513";
+           ctx.rotate(Math.sin(Date.now()/50)*0.1 * (isShaking?1:0));
+           ctx.fillRect(-40, 40, 80, 110);
+           ctx.fillStyle = "#FFD700";
+           ctx.font = "bold 20px sans-serif";
+           ctx.textAlign = "center";
+           ctx.fillText("防犯", 0, 85);
+           ctx.fillText("みくじ", 0, 115);
+           ctx.restore();
+       }
+       function startShake() {
+           if (isShaking) return;
+           isShaking = true;
+           let start = Date.now();
+           function animate() {
+               let elapsed = Date.now() - start;
+               let offsetY = Math.sin(elapsed / 30) * 15;
+               let angle = Math.sin(elapsed / 50) * 0.05;
+               draw(offsetY, angle);
+               if (elapsed < 1500) {
+                   requestAnimationFrame(animate);
+               } else {
+                   isShaking = false;
+                   showResult();
+               }
+           }
+           animate();
+       }
+       function showResult() {
+           const res = results[Math.floor(Math.random() * results.length)];
+           document.getElementById('luckRank').innerText = res.rank;
+           document.getElementById('luckDesc').innerText = res.desc;
+           document.getElementById('luckAction').innerText = "💡 " + res.action;
+           card.classList.add('show');
+       }
+       function closeResult() {
+           card.classList.remove('show');
+           draw();
+       }
+       canvas.addEventListener('click', startShake);
+       draw();
+</script>
+</body>
+</html>
