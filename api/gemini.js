@@ -1,9 +1,28 @@
 export default async function handler(req, res) {
   try {
+    // GET で来た場合はここで終了（重要）
+    if (req.method !== "POST") {
+      return res.status(200).json({
+        status: "ok",
+        message: "POST only"
+      });
+    }
+
+    // body が無い場合の保険
+    const body = req.body || {};
+    const prompt = body.prompt;
+
+    if (!prompt) {
+      return res.status(400).json({
+        error: "prompt is required"
+      });
+    }
+
     return res.status(200).json({
-      status: "ok",
-      method: req.method
+      reply: "test success",
+      promptReceived: prompt
     });
+
   } catch (e) {
     return res.status(500).json({
       error: e.toString()
