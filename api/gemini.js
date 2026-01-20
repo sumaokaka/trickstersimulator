@@ -1,4 +1,8 @@
 export default async function handler(req, res) {
+  res.status(200).json({ ok: true });
+}
+
+/*export default async function handler(req, res) {
   const { prompt, systemInstruction, isJson } = req.body;
 
   const payload = {
@@ -26,3 +30,4 @@ export default async function handler(req, res) {
       : data.candidates[0].content.parts[0].text
   );
 }
+*/
