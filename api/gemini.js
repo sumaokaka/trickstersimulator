@@ -1,6 +1,16 @@
 export default async function handler(req, res) {
-  res.status(200).json({ ok: true });
+  try {
+    return res.status(200).json({
+      status: "ok",
+      method: req.method
+    });
+  } catch (e) {
+    return res.status(500).json({
+      error: e.toString()
+    });
+  }
 }
+
 
 /*export default async function handler(req, res) {
   const { prompt, systemInstruction, isJson } = req.body;
