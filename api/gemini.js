@@ -1,6 +1,9 @@
+export const config = {
+  runtime: "nodejs"
+};
+
 export default async function handler(req, res) {
   try {
-    // GET で来た場合はここで終了（重要）
     if (req.method !== "POST") {
       return res.status(200).json({
         status: "ok",
@@ -8,7 +11,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // body が無い場合の保険
     const body = req.body || {};
     const prompt = body.prompt;
 
