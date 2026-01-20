@@ -1,35 +1,38 @@
-export const config = {
-  runtime: "nodejs"
-};
-
-export default async function handler(req, res) {
-  try {
-    if (req.method !== "POST") {
-      return res.status(200).json({
+export default async function handler(request) {
+  // GET で直接開いたとき
+  if (request.method !== "POST") {
+    return new Response(
+      JSON.stringify({
         status: "ok",
         message: "POST only"
-      });
-    }
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  }
 
-    const body = req.body || {};
-    const prompt = body.prompt;
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    body = {};
+  }
 
-    if (!prompt) {
-      return res.status(400).json({
-        error: "prompt is required"
-      });
-    }
+  const prompt = body.prompt;
 
-    return res.status(200).json({
+  if (!prompt) {
+    return new Response(
+      JSON.stringify({ error: "prompt is required" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  return new Response(
+    JSON.stringify({
       reply: "test success",
       promptReceived: prompt
-    });
-
-  } catch (e) {
-    return res.status(500).json({
-      error: e.toString()
-    });
-  }
+    }),
+    { status: 200, headers: { "Content-Type": "application/json" } }
+  );
 }
 
 
